@@ -2,6 +2,10 @@ let txnFilterMonth = null; // 'YYYY-MM' or null = alle
 let txnFilterAccount = '';
 let txnFilterCategory = '';
 
+// Pending-Beleg-Zustand für das offene Buchungs-Modal
+let pendingReceiptDataUrl = undefined; // undefined = unverändert, null = entfernt, string = neu/aktuell
+let pendingReceiptOriginalHasReceipt = false;
+
 function renderBuchungen() {
   const view = document.getElementById('view-buchungen');
   const accounts = getAccounts().filter(a => !a.archived);
@@ -65,11 +69,13 @@ function renderTxnItem(t, accounts) {
   else if (t.type === 'expense') { icon = '⬇️'; label = t.category; amountClass = 'expense'; amountSign = '−'; }
   else { icon = '⇄'; label = `${accName(t.fromAccountId)} → ${accName(t.toAccountId)}`; amountClass = 'transfer'; amountSign = ''; }
 
+  const receiptBadge = t.hasReceipt ? '<span class="txn-receipt-badge">📎</span>' : '';
+
   return `
     <div class="txn-item" data-id="${t.id}">
       <span class="txn-icon">${icon}</span>
       <div class="txn-main">
-        <div class="txn-cat">${escapeHtml(label)}</div>
+        <div class="txn-cat">${escapeHtml(label)}${receiptBadge}</div>
         <div class="txn-desc">${escapeHtml(t.desc || '')}</div>
         <div class="txn-date">${formatDate(t.date)}</div>
       </div>
@@ -84,6 +90,11 @@ function openTxnModal({ id = null, type = 'expense' } = {}) {
   const form = document.getElementById('txnForm');
   form.reset();
   const accounts = getAccounts().filter(a => !a.archived);
+
+  pendingReceiptDataUrl = undefined;
+  pendingReceiptOriginalHasReceipt = false;
+  document.getElementById('receiptFileInput').value = '';
+  showReceiptPreview(null);
 
   populateSelect('txnAccount', accounts.map(a => ({ value: a.id, label: a.name })));
   populateSelect('txnFromAccount', accounts.map(a => ({ value: a.id, label: a.name })));
@@ -117,7 +128,27 @@ function openTxnModal({ id = null, type = 'expense' } = {}) {
     populateSelect('txnCategory', getCategories(type === 'transfer' ? 'expense' : type).map(c => ({ value: c, label: c })));
   }
 
+  if (txn && txn.hasReceipt) {
+    pendingReceiptOriginalHasReceipt = true;
+    getReceipt(txn.id).then(dataUrl => { if (dataUrl) showReceiptPreview(dataUrl); });
+  }
+
   openModal('txnModalBackdrop');
+}
+
+function showReceiptPreview(dataUrl) {
+  const preview = document.getElementById('receiptPreview');
+  const img = document.getElementById('receiptPreviewImg');
+  const addBtn = document.getElementById('receiptAddBtn');
+  if (dataUrl) {
+    img.src = dataUrl;
+    preview.style.display = '';
+    addBtn.style.display = 'none';
+  } else {
+    img.src = '';
+    preview.style.display = 'none';
+    addBtn.style.display = '';
+  }
 }
 
 function populateSelect(selectId, options) {
@@ -152,12 +183,52 @@ function wireTxnModal() {
     if (!id) return;
     if (!confirm('Diese Buchung löschen?')) return;
     deleteTransaction(id);
+    deleteReceipt(id);
     closeModal('txnModalBackdrop');
     toast('Buchung gelöscht');
     rerenderAll();
   });
 
-  document.getElementById('txnForm').addEventListener('submit', (e) => {
+  document.getElementById('receiptFileInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      const preset = RECEIPT_QUALITY_PRESETS[getReceiptQuality()];
+      const dataUrl = await resizeImageToDataUrl(file, preset.maxDim, preset.quality);
+      pendingReceiptDataUrl = dataUrl;
+      showReceiptPreview(dataUrl);
+    } catch {
+      toast('Foto konnte nicht verarbeitet werden.');
+    }
+  });
+
+  document.getElementById('receiptSaveBtn').addEventListener('click', () => {
+    const src = document.getElementById('receiptPreviewImg').src;
+    if (!src) return;
+    const date = document.getElementById('txnDate').value || todayIso();
+    downloadDataUrl(`Beleg_${date}.jpg`, src);
+    toast('Beleg wird zum Sichern angeboten – im Dialog „In Dateien sichern“ wählen.');
+  });
+
+  document.getElementById('receiptRemoveBtn').addEventListener('click', () => {
+    pendingReceiptDataUrl = null;
+    document.getElementById('receiptFileInput').value = '';
+    showReceiptPreview(null);
+  });
+
+  document.getElementById('receiptPreviewImg').addEventListener('click', () => {
+    const src = document.getElementById('receiptPreviewImg').src;
+    if (!src) return;
+    document.getElementById('receiptLightboxImg').src = src;
+    openModal('receiptLightboxBackdrop');
+  });
+
+  document.getElementById('receiptLightboxClose').addEventListener('click', () => closeModal('receiptLightboxBackdrop'));
+  document.getElementById('receiptLightboxBackdrop').addEventListener('click', (e) => {
+    if (e.target.id === 'receiptLightboxBackdrop') closeModal('receiptLightboxBackdrop');
+  });
+
+  document.getElementById('txnForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const type = document.getElementById('txnType').value;
     const amount = parseFloat(document.getElementById('txnAmount').value);
@@ -168,22 +239,33 @@ function wireTxnModal() {
     if (!amount || amount <= 0) return toast('Bitte einen gültigen Betrag eingeben.');
     if (!date) return toast('Bitte ein Datum wählen.');
 
+    const hasReceipt = pendingReceiptDataUrl === null ? false
+      : pendingReceiptDataUrl !== undefined ? true
+      : pendingReceiptOriginalHasReceipt;
+
     let txn;
     if (type === 'transfer') {
       const fromAccountId = document.getElementById('txnFromAccount').value;
       const toAccountId = document.getElementById('txnToAccount').value;
       if (!fromAccountId || !toAccountId) return toast('Bitte beide Konten wählen.');
       if (fromAccountId === toAccountId) return toast('Quelle und Ziel müssen unterschiedlich sein.');
-      txn = { id, type, date, amount, fromAccountId, toAccountId, category: null, desc, createdAt: new Date().toISOString() };
+      txn = { id, type, date, amount, fromAccountId, toAccountId, category: null, desc, hasReceipt, createdAt: new Date().toISOString() };
     } else {
       const accountId = document.getElementById('txnAccount').value;
       const category = document.getElementById('txnCategory').value;
       if (!accountId) return toast('Bitte ein Konto wählen.');
       if (!category) return toast('Bitte eine Kategorie wählen.');
-      txn = { id, type, date, amount, accountId, category, desc, createdAt: new Date().toISOString() };
+      txn = { id, type, date, amount, accountId, category, desc, hasReceipt, createdAt: new Date().toISOString() };
     }
 
     upsertTransaction(txn);
+
+    if (pendingReceiptDataUrl === null) {
+      await deleteReceipt(id);
+    } else if (typeof pendingReceiptDataUrl === 'string') {
+      await saveReceipt(id, pendingReceiptDataUrl);
+    }
+
     closeModal('txnModalBackdrop');
     toast('Buchung gespeichert');
     rerenderAll();

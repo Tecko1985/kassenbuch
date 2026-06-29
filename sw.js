@@ -1,10 +1,12 @@
-const CACHE_NAME = 'kassenbuch-v1';
+const CACHE_NAME = 'kassenbuch-v4';
 const SHELL_FILES = [
   './',
   './index.html',
   './manifest.json',
   './css/app.css',
   './js/ui-helpers.js',
+  './js/zip-writer.js',
+  './js/receipts.js',
   './js/storage.js',
   './js/model.js',
   './js/render-uebersicht.js',

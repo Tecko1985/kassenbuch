@@ -34,10 +34,28 @@ function renderEinstellungen() {
 
     <div class="card">
       <h2>Daten</h2>
-      <div class="settings-row"><span>JSON-Backup exportieren</span><button type="button" id="exportJsonBtn">Exportieren</button></div>
-      <div class="settings-row"><span>JSON-Backup importieren</span><button type="button" id="importJsonBtn">Importieren</button></div>
+      <div class="settings-row"><span>Backup-Datei anlegen (JSON)</span><button type="button" id="exportJsonBtn">Datei anlegen</button></div>
+      <div class="settings-row"><span>Backup-Datei laden (JSON)</span><button type="button" id="importJsonBtn">Datei laden</button></div>
       <div class="settings-row"><span>Als CSV exportieren</span><button type="button" id="exportCsvBtn">Exportieren</button></div>
       <div class="settings-row"><span>Backup jetzt anlegen</span><button type="button" id="createBackupBtn">Anlegen</button></div>
+    </div>
+
+    <div class="card">
+      <h2>Belegfotos</h2>
+      <div class="settings-row">
+        <span>Speicherort</span>
+        <span style="color:var(--color-text-muted);font-size:13px;text-align:right">Nur lokal auf diesem Gerät<br/>(Browser-Speicher, IndexedDB)</span>
+      </div>
+      <div class="settings-row">
+        <span>Bildqualität</span>
+        <select id="receiptQualitySelect">
+          ${Object.entries(RECEIPT_QUALITY_PRESETS).map(([key, p]) =>
+            `<option value="${key}" ${getReceiptQuality() === key ? 'selected' : ''}>${escapeHtml(p.label)}</option>`).join('')}
+        </select>
+      </div>
+      <div class="settings-row"><span id="receiptStorageInfo">Belegspeicher wird berechnet…</span></div>
+      <div class="settings-row"><span>Alle Belege als ZIP in „Dateien“ sichern</span><button type="button" id="exportReceiptsZipBtn">ZIP anlegen</button></div>
+      <div class="settings-row"><span>Alle Belegfotos löschen</span><button type="button" class="danger" id="deleteAllReceiptsBtn">Löschen</button></div>
     </div>
 
     <div class="card">
@@ -59,6 +77,29 @@ function renderEinstellungen() {
     pushBackup();
     toast('Backup angelegt');
     renderEinstellungen();
+  });
+
+  document.getElementById('receiptQualitySelect').addEventListener('change', (e) => {
+    setReceiptQuality(e.target.value);
+    toast('Bildqualität gespeichert (gilt für künftige Belegfotos)');
+  });
+
+  document.getElementById('exportReceiptsZipBtn').addEventListener('click', exportReceiptsZip);
+
+  document.getElementById('deleteAllReceiptsBtn').addEventListener('click', async () => {
+    if (!confirm('Alle Belegfotos lokal löschen? Die Buchungen selbst bleiben erhalten, nur die Fotos werden entfernt.')) return;
+    await deleteAllReceipts();
+    const txns = getTransactions().map(t => t.hasReceipt ? { ...t, hasReceipt: false } : t);
+    saveTransactions(txns);
+    toast('Alle Belegfotos gelöscht');
+    rerenderAll();
+  });
+
+  getReceiptsStorageInfo().then(({ count, bytes }) => {
+    const el = document.getElementById('receiptStorageInfo');
+    if (!el) return;
+    const mb = (bytes / (1024 * 1024)).toFixed(bytes > 1024 * 1024 ? 1 : 2);
+    el.textContent = count ? `${count} Beleg${count === 1 ? '' : 'e'} · ca. ${mb} MB lokal gespeichert` : 'Keine Belegfotos gespeichert.';
   });
 
   view.querySelectorAll('.backup-restore').forEach(btn => {
@@ -139,6 +180,28 @@ function exportCsv() {
   const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(';')).join('\r\n');
   download(`kassenbuch_${todayIso()}.csv`, 'text/csv', '﻿' + csv);
   toast('CSV-Export gestartet');
+}
+
+async function exportReceiptsZip() {
+  const rows = await getAllReceiptsRaw();
+  if (!rows.length) return toast('Keine Belegfotos vorhanden.');
+
+  const txns = getTransactions();
+  const usedNames = new Set();
+  const files = rows.map(row => {
+    const txn = txns.find(t => t.id === row.txnId);
+    const date = txn?.date || row.savedAt.slice(0, 10);
+    const cat = (txn?.category || (txn?.type === 'transfer' ? 'Umbuchung' : 'Beleg')).replace(/[^a-zA-Z0-9äöüÄÖÜß_-]+/g, '_');
+    let name = `${date}_${cat}.jpg`;
+    let i = 2;
+    while (usedNames.has(name)) { name = `${date}_${cat}_${i++}.jpg`; }
+    usedNames.add(name);
+    return { name, data: dataUrlToBytes(row.dataUrl), date: new Date(row.savedAt) };
+  });
+
+  const blob = buildZipBlob(files);
+  download(`kassenbuch_belege_${todayIso()}.zip`, 'application/zip', blob);
+  toast('ZIP wird zum Sichern angeboten – im Dialog „In Dateien sichern“ wählen.');
 }
 
 function wireImportInput() {

@@ -5,7 +5,22 @@ const STORAGE_KEYS = {
   transactions: 'kassenbuch_transactions',
   budgets: 'kassenbuch_budgets',
   backups: 'kassenbuch_backups',
+  receiptQuality: 'kassenbuch_receipt_quality',
 };
+
+const RECEIPT_QUALITY_PRESETS = {
+  klein: { label: 'Klein (schnell, wenig Speicher)', maxDim: 800, quality: 0.6 },
+  mittel: { label: 'Mittel (empfohlen)', maxDim: 1280, quality: 0.7 },
+  gross: { label: 'Groß (mehr Details, mehr Speicher)', maxDim: 1920, quality: 0.85 },
+};
+
+function getReceiptQuality() {
+  const v = loadJson(STORAGE_KEYS.receiptQuality, 'mittel');
+  return RECEIPT_QUALITY_PRESETS[v] ? v : 'mittel';
+}
+function setReceiptQuality(v) {
+  saveJson(STORAGE_KEYS.receiptQuality, RECEIPT_QUALITY_PRESETS[v] ? v : 'mittel');
+}
 
 const MAX_BACKUPS = 10;
 

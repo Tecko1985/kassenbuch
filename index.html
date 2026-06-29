@@ -94,6 +94,17 @@
       <label>Beschreibung</label>
       <input type="text" id="txnDesc" placeholder="z.B. Wocheneinkauf" />
 
+      <label>Beleg</label>
+      <div class="receipt-field" id="receiptField">
+        <div class="receipt-preview" id="receiptPreview" style="display:none">
+          <img id="receiptPreviewImg" alt="Beleg" />
+          <button type="button" class="receipt-save-btn" id="receiptSaveBtn" aria-label="Beleg in Dateien sichern">💾</button>
+          <button type="button" class="receipt-remove-btn" id="receiptRemoveBtn" aria-label="Beleg entfernen">✕</button>
+        </div>
+        <label class="receipt-add-btn" id="receiptAddBtn" for="receiptFileInput">📷 Beleg fotografieren / wählen</label>
+        <input type="file" id="receiptFileInput" accept="image/*" capture="environment" style="display:none" />
+      </div>
+
       <div class="modal-actions">
         <button type="button" class="btn-secondary" id="txnDeleteBtn" style="display:none">Löschen</button>
         <button type="button" class="btn-secondary" id="txnCancelBtn">Abbrechen</button>
@@ -144,11 +155,21 @@
   </div>
 </div>
 
+<!-- Beleg-Lightbox -->
+<div class="modal-backdrop" id="receiptLightboxBackdrop">
+  <div class="receipt-lightbox" id="receiptLightbox">
+    <button type="button" class="receipt-lightbox-close" id="receiptLightboxClose" aria-label="Schließen">✕</button>
+    <img id="receiptLightboxImg" alt="Beleg" />
+  </div>
+</div>
+
 <div class="toast-container" id="toastContainer"></div>
 
 <input type="file" id="importFileInput" accept="application/json" style="display:none" />
 
 <script src="js/ui-helpers.js"></script>
+<script src="js/zip-writer.js"></script>
+<script src="js/receipts.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/model.js"></script>
 <script src="js/render-uebersicht.js"></script>
