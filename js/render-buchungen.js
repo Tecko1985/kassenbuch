@@ -89,22 +89,35 @@ function renderTxnItem(t, accounts) {
 function openTxnModal({ id = null, type = 'expense' } = {}) {
   const form = document.getElementById('txnForm');
   form.reset();
-  const accounts = getAccounts().filter(a => !a.archived);
 
   pendingReceiptDataUrl = undefined;
   pendingReceiptOriginalHasReceipt = false;
   document.getElementById('receiptFileInput').value = '';
   showReceiptPreview(null);
 
-  populateSelect('txnAccount', accounts.map(a => ({ value: a.id, label: a.name })));
-  populateSelect('txnFromAccount', accounts.map(a => ({ value: a.id, label: a.name })));
-  populateSelect('txnToAccount', accounts.map(a => ({ value: a.id, label: a.name })));
-
   let txn = null;
   if (id) {
     txn = getTransactions().find(t => t.id === id);
     type = txn.type;
   }
+
+  // Konten für die Auswahl: aktive Konten + ggf. das archivierte Konto dieser Buchung,
+  // damit eine bestehende Buchung beim Bearbeiten nicht versehentlich auf ein anderes
+  // Konto "springt" (select.value scheitert sonst lautlos, wenn die Option fehlt).
+  const allAccounts = getAccounts();
+  const activeAccounts = allAccounts.filter(a => !a.archived);
+  const referencedAccountIds = txn ? (txn.type === 'transfer' ? [txn.fromAccountId, txn.toAccountId] : [txn.accountId]) : [];
+  const accountsForSelect = activeAccounts.slice();
+  for (const refId of referencedAccountIds) {
+    if (refId && !accountsForSelect.some(a => a.id === refId)) {
+      const acc = allAccounts.find(a => a.id === refId);
+      if (acc) accountsForSelect.push(acc);
+    }
+  }
+  const accountOptions = accountsForSelect.map(a => ({ value: a.id, label: a.name + (a.archived ? ' (archiviert)' : '') }));
+  populateSelect('txnAccount', accountOptions);
+  populateSelect('txnFromAccount', accountOptions);
+  populateSelect('txnToAccount', accountOptions);
 
   setTxnType(type);
 
@@ -120,12 +133,12 @@ function openTxnModal({ id = null, type = 'expense' } = {}) {
       document.getElementById('txnToAccount').value = txn.toAccountId;
     } else {
       document.getElementById('txnAccount').value = txn.accountId;
-      populateSelect('txnCategory', getCategories(txn.type).map(c => ({ value: c, label: c })));
+      populateSelect('txnCategory', categoryOptionsWithCurrent(txn.type, txn.category));
       document.getElementById('txnCategory').value = txn.category;
     }
   } else {
     document.getElementById('txnDate').value = todayIso();
-    populateSelect('txnCategory', getCategories(type === 'transfer' ? 'expense' : type).map(c => ({ value: c, label: c })));
+    populateSelect('txnCategory', categoryOptionsWithCurrent(type === 'transfer' ? 'expense' : type, null));
   }
 
   if (txn && txn.hasReceipt) {
@@ -149,6 +162,14 @@ function showReceiptPreview(dataUrl) {
     preview.style.display = 'none';
     addBtn.style.display = '';
   }
+}
+
+function categoryOptionsWithCurrent(type, current) {
+  const cats = getCategories(type);
+  const list = cats.slice();
+  const orphan = current && !list.includes(current);
+  if (orphan) list.push(current);
+  return list.map(c => ({ value: c, label: c + (orphan && c === current ? ' (gelöscht)' : '') }));
 }
 
 function populateSelect(selectId, options) {

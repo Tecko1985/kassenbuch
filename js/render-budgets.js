@@ -58,7 +58,12 @@ function openBudgetModal(category) {
   form.reset();
   const allExpenseCats = getCategories('expense');
   const usedCats = getBudgets().map(b => b.category);
-  const available = category ? allExpenseCats : allExpenseCats.filter(c => !usedCats.includes(c));
+  // Falls die Kategorie dieses Budgets inzwischen gelöscht wurde, trotzdem als Option
+  // anbieten – sonst würde select.value lautlos scheitern und beim Speichern ein
+  // anderes (das erste) Kategorie-Konto eingetragen werden.
+  const available = category
+    ? (allExpenseCats.includes(category) ? allExpenseCats : [...allExpenseCats, category])
+    : allExpenseCats.filter(c => !usedCats.includes(c));
 
   populateSelect('budgetCategory', available.map(c => ({ value: c, label: c })));
   const deleteBtn = document.getElementById('budgetDeleteBtn');
