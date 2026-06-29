@@ -1,0 +1,46 @@
+name: Deploy Pages (main + test)
+
+on:
+  push:
+    branches: [main, test]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main (stabile Version -> /)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: public
+
+      - name: Checkout test (Testversion -> /test)
+        uses: actions/checkout@v4
+        with:
+          ref: test
+          path: public/test
+
+      - name: Remove nested git metadata
+        run: rm -rf public/.git public/test/.git
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

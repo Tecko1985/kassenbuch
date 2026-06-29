@@ -1,0 +1,191 @@
+let txnFilterMonth = null; // 'YYYY-MM' or null = alle
+let txnFilterAccount = '';
+let txnFilterCategory = '';
+
+function renderBuchungen() {
+  const view = document.getElementById('view-buchungen');
+  const accounts = getAccounts().filter(a => !a.archived);
+
+  let txns = sortedTransactionsDesc();
+  if (txnFilterMonth) txns = txns.filter(t => t.date.startsWith(txnFilterMonth));
+  if (txnFilterAccount) txns = txns.filter(t => t.accountId === txnFilterAccount || t.fromAccountId === txnFilterAccount || t.toAccountId === txnFilterAccount);
+  if (txnFilterCategory) txns = txns.filter(t => t.category === txnFilterCategory);
+
+  const allCats = [...new Set([...getCategories('income'), ...getCategories('expense')])];
+
+  const monthOptions = getAvailableMonths().map(m =>
+    `<option value="${m}" ${txnFilterMonth === m ? 'selected' : ''}>${formatMonthLabel(m)}</option>`).join('');
+
+  const accountOptions = accounts.map(a =>
+    `<option value="${a.id}" ${txnFilterAccount === a.id ? 'selected' : ''}>${escapeHtml(a.name)}</option>`).join('');
+
+  const categoryOptions = allCats.map(c =>
+    `<option value="${escapeHtml(c)}" ${txnFilterCategory === c ? 'selected' : ''}>${escapeHtml(c)}</option>`).join('');
+
+  const listHtml = txns.length ? txns.map(t => renderTxnItem(t, accounts)).join('') :
+    `<div class="empty-state">Keine Buchungen gefunden.</div>`;
+
+  view.innerHTML = `
+    <div class="card">
+      <h2>Buchungen</h2>
+      <div class="filter-row">
+        <select id="filterMonth"><option value="">Alle Monate</option>${monthOptions}</select>
+        <select id="filterAccount"><option value="">Alle Konten</option>${accountOptions}</select>
+        <select id="filterCategory"><option value="">Alle Kategorien</option>${categoryOptions}</select>
+      </div>
+      <div class="txn-list" id="txnList">${listHtml}</div>
+    </div>
+  `;
+
+  document.getElementById('filterMonth').addEventListener('change', (e) => { txnFilterMonth = e.target.value || null; renderBuchungen(); });
+  document.getElementById('filterAccount').addEventListener('change', (e) => { txnFilterAccount = e.target.value; renderBuchungen(); });
+  document.getElementById('filterCategory').addEventListener('change', (e) => { txnFilterCategory = e.target.value; renderBuchungen(); });
+
+  view.querySelectorAll('.txn-item').forEach(el => {
+    el.addEventListener('click', () => openTxnModal({ id: el.dataset.id }));
+  });
+}
+
+function getAvailableMonths() {
+  const months = new Set(getTransactions().map(t => t.date.slice(0, 7)));
+  months.add(todayIso().slice(0, 7));
+  return [...months].sort().reverse();
+}
+
+function formatMonthLabel(ym) {
+  const [y, m] = ym.split('-');
+  const names = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  return `${names[parseInt(m, 10) - 1]} ${y}`;
+}
+
+function renderTxnItem(t, accounts) {
+  const accName = id => accounts.find(a => a.id === id)?.name || '?';
+  let icon, label, amountClass, amountSign;
+  if (t.type === 'income') { icon = '⬆️'; label = t.category; amountClass = 'income'; amountSign = '+'; }
+  else if (t.type === 'expense') { icon = '⬇️'; label = t.category; amountClass = 'expense'; amountSign = '−'; }
+  else { icon = '⇄'; label = `${accName(t.fromAccountId)} → ${accName(t.toAccountId)}`; amountClass = 'transfer'; amountSign = ''; }
+
+  return `
+    <div class="txn-item" data-id="${t.id}">
+      <span class="txn-icon">${icon}</span>
+      <div class="txn-main">
+        <div class="txn-cat">${escapeHtml(label)}</div>
+        <div class="txn-desc">${escapeHtml(t.desc || '')}</div>
+        <div class="txn-date">${formatDate(t.date)}</div>
+      </div>
+      <div class="txn-amount ${amountClass}">${amountSign}${formatCurrency(t.amount)}</div>
+    </div>
+  `;
+}
+
+// ── Transaktions-Modal ─────────────────────────────────────────────────────
+
+function openTxnModal({ id = null, type = 'expense' } = {}) {
+  const form = document.getElementById('txnForm');
+  form.reset();
+  const accounts = getAccounts().filter(a => !a.archived);
+
+  populateSelect('txnAccount', accounts.map(a => ({ value: a.id, label: a.name })));
+  populateSelect('txnFromAccount', accounts.map(a => ({ value: a.id, label: a.name })));
+  populateSelect('txnToAccount', accounts.map(a => ({ value: a.id, label: a.name })));
+
+  let txn = null;
+  if (id) {
+    txn = getTransactions().find(t => t.id === id);
+    type = txn.type;
+  }
+
+  setTxnType(type);
+
+  document.getElementById('txnId').value = id || '';
+  document.getElementById('txnDeleteBtn').style.display = id ? '' : 'none';
+
+  if (txn) {
+    document.getElementById('txnAmount').value = txn.amount;
+    document.getElementById('txnDate').value = txn.date;
+    document.getElementById('txnDesc').value = txn.desc || '';
+    if (txn.type === 'transfer') {
+      document.getElementById('txnFromAccount').value = txn.fromAccountId;
+      document.getElementById('txnToAccount').value = txn.toAccountId;
+    } else {
+      document.getElementById('txnAccount').value = txn.accountId;
+      populateSelect('txnCategory', getCategories(txn.type).map(c => ({ value: c, label: c })));
+      document.getElementById('txnCategory').value = txn.category;
+    }
+  } else {
+    document.getElementById('txnDate').value = todayIso();
+    populateSelect('txnCategory', getCategories(type === 'transfer' ? 'expense' : type).map(c => ({ value: c, label: c })));
+  }
+
+  openModal('txnModalBackdrop');
+}
+
+function populateSelect(selectId, options) {
+  const select = document.getElementById(selectId);
+  select.innerHTML = options.map(o => `<option value="${escapeHtml(o.value)}">${escapeHtml(o.label)}</option>`).join('');
+}
+
+function setTxnType(type) {
+  document.getElementById('txnType').value = type;
+  document.querySelectorAll('#txnTypeTabs .modal-tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.type === type);
+  });
+  const isTransfer = type === 'transfer';
+  document.getElementById('txnAccountGroup').style.display = isTransfer ? 'none' : '';
+  document.getElementById('txnCategoryGroup').style.display = isTransfer ? 'none' : '';
+  document.getElementById('txnFromAccountGroup').style.display = isTransfer ? '' : 'none';
+  document.getElementById('txnToAccountGroup').style.display = isTransfer ? '' : 'none';
+  if (!isTransfer) {
+    populateSelect('txnCategory', getCategories(type).map(c => ({ value: c, label: c })));
+  }
+}
+
+function wireTxnModal() {
+  document.querySelectorAll('#txnTypeTabs .modal-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => setTxnType(btn.dataset.type));
+  });
+
+  document.getElementById('txnCancelBtn').addEventListener('click', () => closeModal('txnModalBackdrop'));
+
+  document.getElementById('txnDeleteBtn').addEventListener('click', () => {
+    const id = document.getElementById('txnId').value;
+    if (!id) return;
+    if (!confirm('Diese Buchung löschen?')) return;
+    deleteTransaction(id);
+    closeModal('txnModalBackdrop');
+    toast('Buchung gelöscht');
+    rerenderAll();
+  });
+
+  document.getElementById('txnForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const type = document.getElementById('txnType').value;
+    const amount = parseFloat(document.getElementById('txnAmount').value);
+    const date = document.getElementById('txnDate').value;
+    const desc = document.getElementById('txnDesc').value.trim();
+    const id = document.getElementById('txnId').value || genId('txn');
+
+    if (!amount || amount <= 0) return toast('Bitte einen gültigen Betrag eingeben.');
+    if (!date) return toast('Bitte ein Datum wählen.');
+
+    let txn;
+    if (type === 'transfer') {
+      const fromAccountId = document.getElementById('txnFromAccount').value;
+      const toAccountId = document.getElementById('txnToAccount').value;
+      if (!fromAccountId || !toAccountId) return toast('Bitte beide Konten wählen.');
+      if (fromAccountId === toAccountId) return toast('Quelle und Ziel müssen unterschiedlich sein.');
+      txn = { id, type, date, amount, fromAccountId, toAccountId, category: null, desc, createdAt: new Date().toISOString() };
+    } else {
+      const accountId = document.getElementById('txnAccount').value;
+      const category = document.getElementById('txnCategory').value;
+      if (!accountId) return toast('Bitte ein Konto wählen.');
+      if (!category) return toast('Bitte eine Kategorie wählen.');
+      txn = { id, type, date, amount, accountId, category, desc, createdAt: new Date().toISOString() };
+    }
+
+    upsertTransaction(txn);
+    closeModal('txnModalBackdrop');
+    toast('Buchung gespeichert');
+    rerenderAll();
+  });
+}
