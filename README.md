@@ -13,12 +13,11 @@ Persönliches Kassenbuch (Haushaltsbuch) als clientseitige PWA – läuft komple
 - Daten bleiben rein lokal (`localStorage`) – JSON-Export/Import als manuelles Backup, CSV-Export, automatische Backup-Historie
 - Offline-fähig (Service Worker, Web App Manifest)
 
-## Live-Versionen
+## Live-Version
 
-- **Stabil** (`main`): https://tecko1985.github.io/kassenbuch/
-- **Test** (`test`): https://tecko1985.github.io/kassenbuch/test/
+- https://tecko1985.github.io/kassenbuch/
 
-Änderungen werden zuerst auf `test` gepusht und dort geprüft, bevor sie per Merge in `main` übernommen werden. Beide Branches werden automatisch per GitHub Actions (`.github/workflows/pages.yml`) auf GitHub Pages deployed.
+Wird automatisch per GitHub Actions (`.github/workflows/pages.yml`) bei jedem Push auf `main` auf GitHub Pages deployed.
 
 ## Lokal entwickeln/testen
 
@@ -32,7 +31,7 @@ Danach `http://localhost:8420` öffnen.
 
 ## Auf dem iPad installieren
 
-Test- oder Live-URL in Safari öffnen → Teilen-Menü → „Zum Home-Bildschirm“.
+Live-URL in Safari öffnen → Teilen-Menü → „Zum Home-Bildschirm“.
 
 **Wichtig:** Safaris „Intelligent Tracking Prevention“ löscht script-gespeicherte Daten (`localStorage`, IndexedDB – also auch alle Buchungen und Belegfotos) automatisch, wenn die Seite 7 Tage lang nicht geöffnet wurde. Als Home-Bildschirm-App zählt das nicht mehr als reiner Safari-Tab, daher ist die Installation auf dem Home-Bildschirm nicht nur praktisch, sondern auch wichtig für die Datensicherheit. Zusätzlich regelmäßig ein JSON-Backup anlegen (Einstellungen → „Datei anlegen“).
 
