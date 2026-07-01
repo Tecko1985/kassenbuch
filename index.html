@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Kassenbuch</title>
+<meta name="theme-color" content="#1a56a0" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Kassenbuch" />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
+<link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <h1>Kassenbuch</h1>
+  <div class="header-balance" id="headerBalance">0,00&nbsp;€</div>
+</header>
+
+<main id="views">
+
+  <section class="view" id="view-uebersicht" data-view="uebersicht"></section>
+
+  <section class="view" id="view-buchungen" data-view="buchungen"></section>
+
+  <section class="view" id="view-budgets" data-view="budgets"></section>
+
+  <section class="view" id="view-konten" data-view="konten"></section>
+
+  <section class="view" id="view-einstellungen" data-view="einstellungen"></section>
+
+</main>
+
+<button class="fab" id="fabAdd" title="Buchung hinzufügen" aria-label="Buchung hinzufügen">+</button>
+
+<nav class="tabbar">
+  <button class="tab-btn" data-view="uebersicht">
+    <span class="tab-icon">🏠</span><span class="tab-label">Übersicht</span>
+  </button>
+  <button class="tab-btn" data-view="buchungen">
+    <span class="tab-icon">📋</span><span class="tab-label">Buchungen</span>
+  </button>
+  <button class="tab-btn" data-view="budgets">
+    <span class="tab-icon">🎯</span><span class="tab-label">Budgets</span>
+  </button>
+  <button class="tab-btn" data-view="konten">
+    <span class="tab-icon">💳</span><span class="tab-label">Konten</span>
+  </button>
+  <button class="tab-btn" data-view="einstellungen">
+    <span class="tab-icon">⚙️</span><span class="tab-label">Einstellungen</span>
+  </button>
+</nav>
+
+<!-- Buchung-Modal: Einnahme / Ausgabe / Umbuchung -->
+<div class="modal-backdrop" id="txnModalBackdrop">
+  <div class="modal sheet" id="txnModal">
+    <div class="modal-handle"></div>
+    <div class="modal-tabs" id="txnTypeTabs">
+      <button class="modal-tab-btn active" data-type="expense">Ausgabe</button>
+      <button class="modal-tab-btn" data-type="income">Einnahme</button>
+      <button class="modal-tab-btn" data-type="transfer">Umbuchung</button>
+    </div>
+    <form id="txnForm">
+      <input type="hidden" id="txnId" />
+      <input type="hidden" id="txnType" value="expense" />
+
+      <label>Betrag (€)</label>
+      <input type="number" id="txnAmount" inputmode="decimal" step="0.01" min="0" placeholder="0,00" required />
+
+      <label>Datum</label>
+      <input type="date" id="txnDate" required />
+
+      <div class="field-group" id="txnAccountGroup">
+        <label>Konto</label>
+        <select id="txnAccount"></select>
+      </div>
+
+      <div class="field-group" id="txnFromAccountGroup" style="display:none">
+        <label>Von Konto</label>
+        <select id="txnFromAccount"></select>
+      </div>
+      <div class="field-group" id="txnToAccountGroup" style="display:none">
+        <label>Auf Konto</label>
+        <select id="txnToAccount"></select>
+      </div>
+
+      <div class="field-group" id="txnCategoryGroup">
+        <label>Kategorie</label>
+        <select id="txnCategory"></select>
+      </div>
+
+      <label>Beschreibung</label>
+      <input type="text" id="txnDesc" placeholder="z.B. Wocheneinkauf" />
+
+      <label>Beleg</label>
+      <div class="receipt-field" id="receiptField">
+        <div class="receipt-preview" id="receiptPreview" style="display:none">
+          <img id="receiptPreviewImg" alt="Beleg" />
+          <button type="button" class="receipt-save-btn" id="receiptSaveBtn" aria-label="Beleg in Dateien sichern">💾</button>
+          <button type="button" class="receipt-remove-btn" id="receiptRemoveBtn" aria-label="Beleg entfernen">✕</button>
+        </div>
+        <label class="receipt-add-btn" id="receiptAddBtn" for="receiptFileInput">📷 Beleg fotografieren / wählen</label>
+        <input type="file" id="receiptFileInput" accept="image/*" capture="environment" style="display:none" />
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="txnDeleteBtn" style="display:none">Löschen</button>
+        <button type="button" class="btn-secondary" id="txnCancelBtn">Abbrechen</button>
+        <button type="submit" class="btn-primary">Speichern</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Konto-Modal -->
+<div class="modal-backdrop" id="accModalBackdrop">
+  <div class="modal sheet" id="accModal">
+    <div class="modal-handle"></div>
+    <h2>Konto</h2>
+    <form id="accForm">
+      <input type="hidden" id="accId" />
+      <label>Name</label>
+      <input type="text" id="accName" placeholder="z.B. Bar" required />
+      <label>Icon (Emoji)</label>
+      <input type="text" id="accIcon" placeholder="💶" maxlength="4" />
+      <label>Startsaldo (€)</label>
+      <input type="number" id="accStartBalance" inputmode="decimal" step="0.01" placeholder="0,00" />
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="accArchiveBtn" style="display:none">Archivieren</button>
+        <button type="button" class="btn-secondary" id="accCancelBtn">Abbrechen</button>
+        <button type="submit" class="btn-primary">Speichern</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Budget-Modal -->
+<div class="modal-backdrop" id="budgetModalBackdrop">
+  <div class="modal sheet" id="budgetModal">
+    <div class="modal-handle"></div>
+    <h2>Budget</h2>
+    <form id="budgetForm">
+      <label>Kategorie</label>
+      <select id="budgetCategory"></select>
+      <label>Monatslimit (€)</label>
+      <input type="number" id="budgetLimit" inputmode="decimal" step="0.01" min="0" placeholder="0,00" required />
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="budgetDeleteBtn" style="display:none">Löschen</button>
+        <button type="button" class="btn-secondary" id="budgetCancelBtn">Abbrechen</button>
+        <button type="submit" class="btn-primary">Speichern</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Beleg-Lightbox -->
+<div class="modal-backdrop" id="receiptLightboxBackdrop">
+  <div class="receipt-lightbox" id="receiptLightbox">
+    <button type="button" class="receipt-lightbox-close" id="receiptLightboxClose" aria-label="Schließen">✕</button>
+    <img id="receiptLightboxImg" alt="Beleg" />
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<input type="file" id="importFileInput" accept="application/json" style="display:none" />
+
+<script src="js/ui-helpers.js"></script>
+<script src="js/zip-writer.js"></script>
+<script src="js/receipts.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/model.js"></script>
+<script src="js/render-uebersicht.js"></script>
+<script src="js/render-buchungen.js"></script>
+<script src="js/render-budgets.js"></script>
+<script src="js/render-konten.js"></script>
+<script src="js/render-einstellungen.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
