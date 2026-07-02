@@ -64,12 +64,15 @@ function wireAccountModal() {
     const id = document.getElementById('accId').value || genId('acc');
     const name = document.getElementById('accName').value.trim();
     if (!name) return toast('Bitte einen Namen eingeben.');
+    const existing = getAccounts().find(a => a.id === id);
     upsertAccount({
       id,
       name,
       icon: document.getElementById('accIcon').value.trim() || '💰',
       startBalance: parseFloat(document.getElementById('accStartBalance').value) || 0,
-      archived: false,
+      // Beim Bearbeiten den Archiv-Status beibehalten — sonst würde ein
+      // archiviertes Konto durch bloßes Speichern wieder aktiviert.
+      archived: existing ? !!existing.archived : false,
     });
     closeModal('accModalBackdrop');
     toast('Konto gespeichert');

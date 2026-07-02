@@ -48,7 +48,9 @@ function buildZipBlob(files) {
     const localHeader = new DataView(new ArrayBuffer(30));
     localHeader.setUint32(0, 0x04034b50, true);
     localHeader.setUint16(4, 20, true);
-    localHeader.setUint16(6, 0, true);
+    // Bit 11 (0x0800) = Dateinamen sind UTF-8. Ohne das Flag interpretieren
+    // Windows-Explorer & Co. die UTF-8-Bytes als CP437 (Umlaute -> "BÃ¼ro...").
+    localHeader.setUint16(6, 0x0800, true);
     localHeader.setUint16(8, 0, true);
     localHeader.setUint16(10, time, true);
     localHeader.setUint16(12, dosDate, true);
@@ -64,7 +66,7 @@ function buildZipBlob(files) {
     centralHeader.setUint32(0, 0x02014b50, true);
     centralHeader.setUint16(4, 20, true);
     centralHeader.setUint16(6, 20, true);
-    centralHeader.setUint16(8, 0, true);
+    centralHeader.setUint16(8, 0x0800, true); // UTF-8-Flag, muss zum Local Header passen
     centralHeader.setUint16(10, 0, true);
     centralHeader.setUint16(12, time, true);
     centralHeader.setUint16(14, dosDate, true);
