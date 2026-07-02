@@ -45,6 +45,8 @@ button, input, select { font-family: inherit; }
   color: #fff;
 }
 .app-header h1 { font-size: 18px; margin: 0; font-weight: 600; }
+.header-right { display: flex; align-items: center; gap: 12px; }
+.header-logo { height: 32px; width: auto; display: block; }
 .header-balance { font-size: 16px; font-weight: 700; }
 
 #views {

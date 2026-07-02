@@ -1,4 +1,4 @@
-# Kassenbuch (v1.0)
+# Kassenbuch (v1.1)
 
 Persönliches Kassenbuch (Haushaltsbuch) als clientseitige PWA – läuft komplett lokal im Browser, ohne Backend und ohne Login. Gedacht für die Nutzung auf dem iPad (als Homescreen-Icon installierbar), funktioniert aber in jedem modernen Browser.
 
