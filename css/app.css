@@ -31,6 +31,22 @@ html, body {
 
 button, input, select { font-family: inherit; }
 
+.dashboard-bar {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 8px 16px 0;
+}
+.back-to-dashboard {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+.back-to-dashboard:hover { text-decoration: underline; }
+
 .app-header {
   position: sticky;
   top: 0;
