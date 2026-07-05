@@ -31,21 +31,23 @@ html, body {
 
 button, input, select { font-family: inherit; }
 
-.dashboard-bar {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 8px 16px 0;
-}
 .back-to-dashboard {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   font-size: 13px;
-  font-weight: 500;
-  color: var(--color-primary);
+  font-weight: 600;
+  color: #fff;
   text-decoration: none;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 6px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex: 0 0 auto;
+  transition: background 0.15s ease;
 }
-.back-to-dashboard:hover { text-decoration: underline; }
+.back-to-dashboard:hover { background: rgba(255, 255, 255, 0.28); text-decoration: none; }
 
 .app-header {
   position: sticky;
@@ -53,15 +55,16 @@ button, input, select { font-family: inherit; }
   z-index: 5;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   height: var(--header-height);
   padding: 0 16px;
   padding-top: env(safe-area-inset-top);
   background: var(--color-primary);
   color: #fff;
+  gap: 10px;
 }
-.app-header h1 { font-size: 18px; margin: 0; font-weight: 600; }
-.header-right { display: flex; align-items: center; gap: 12px; }
+.app-header h1 { font-size: 18px; margin: 0; font-weight: 600; flex: 1 1 60px; }
+.header-right { display: flex; align-items: center; gap: 12px; flex: 1 1 60px; justify-content: flex-end; }
 .header-logo { height: 32px; width: auto; display: block; }
 .header-balance { font-size: 16px; font-weight: 700; }
 
