@@ -6,6 +6,7 @@ const VIEW_RENDERERS = {
   budgets: renderBudgets,
   konten: renderKonten,
   einstellungen: renderEinstellungen,
+  info: renderInfo,
 };
 
 function switchView(view) {
@@ -25,6 +26,12 @@ function init() {
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => switchView(btn.dataset.view));
+  });
+
+  const versionBadge = document.getElementById('version-badge');
+  versionBadge.addEventListener('click', () => switchView('info'));
+  versionBadge.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); switchView('info'); }
   });
 
   document.getElementById('fabAdd').addEventListener('click', () => openTxnModal({ type: 'expense' }));

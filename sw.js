@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kassenbuch-v6';
+const CACHE_NAME = 'kassenbuch-v7';
 const SHELL_FILES = [
   './',
   './index.html',
@@ -15,6 +15,7 @@ const SHELL_FILES = [
   './js/render-budgets.js',
   './js/render-konten.js',
   './js/render-einstellungen.js',
+  './js/render-info.js',
   './js/app.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
