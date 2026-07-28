@@ -2,6 +2,18 @@ const APP_VERSION = '1.0';
 
 const APP_CHANGELOG = [
   {
+    version: '1.1',
+    groups: [
+      {
+        title: 'Bedienung am Handy',
+        items: [
+          'Eingabefelder sind am Handy mindestens 16 Pixel groß. Dadurch zoomt der iPhone-Browser beim Antippen eines Feldes nicht mehr ungefragt in die Seite hinein und bleibt danach verschoben stehen.',
+          'Die Kopfzeile bricht auf schmalen Bildschirmen um, statt seitlich herauszuragen und den Titel links anzuschneiden.',
+        ],
+      },
+    ],
+  },
+  {
     version: '1.0',
     groups: [
       {
