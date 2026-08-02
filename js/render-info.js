@@ -1,18 +1,6 @@
 const APP_VERSION = '1.0';
 
-const APP_CHANGELOG = [
-  {
-    version: '1.1',
-    groups: [
-      {
-        title: 'Bedienung am Handy',
-        items: [
-          'Eingabefelder sind am Handy mindestens 16 Pixel groß. Dadurch zoomt der iPhone-Browser beim Antippen eines Feldes nicht mehr ungefragt in die Seite hinein und bleibt danach verschoben stehen.',
-          'Die Kopfzeile bricht auf schmalen Bildschirmen um, statt seitlich herauszuragen und den Titel links anzuschneiden.',
-        ],
-      },
-    ],
-  },
+const CHANGELOG = [
   {
     version: '1.0',
     groups: [
@@ -37,6 +25,13 @@ const APP_CHANGELOG = [
           'Export und Import als JSON-Datei, Export als CSV für Excel.',
           'Automatische Backup-Historie.',
           'Funktioniert offline und lässt sich auf den Home-Bildschirm legen.',
+        ],
+      },
+      {
+        title: 'Bedienung am Handy',
+        items: [
+          'Eingabefelder sind mindestens 16 Pixel groß, damit der iPhone-Browser beim Antippen nicht ungefragt in die Seite hineinzoomt und verschoben stehen bleibt.',
+          'Die Kopfzeile bricht auf schmalen Bildschirmen um, statt seitlich herauszuragen und den Titel anzuschneiden.',
         ],
       },
     ],
