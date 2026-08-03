@@ -15,7 +15,7 @@ Persönliches Kassenbuch (Haushaltsbuch) als clientseitige PWA – läuft komple
 
 ## Live-Version
 
-- https://tecko1985.github.io/kassenbuch/
+- https://sc1911heiligenstadt.github.io/kassenbuch/
 
 Wird automatisch per GitHub Actions (`.github/workflows/pages.yml`) bei jedem Push auf `main` auf GitHub Pages deployed.
 
