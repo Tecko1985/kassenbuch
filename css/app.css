@@ -497,8 +497,6 @@ form select {
   padding: 2px 8px;
   vertical-align: middle;
 }
-.version-badge-link { cursor: pointer; }
-.version-badge-link:hover, .version-badge-link:focus-visible { background: rgba(255, 255, 255, 0.32); }
 .card .version-badge {
   background: var(--color-bg);
   border-color: var(--color-border);

@@ -69,7 +69,7 @@ function renderInfo() {
   `;
 
   // Erst nach dem Rendern -- #version-badge-2 entsteht oben.
-  document.querySelectorAll('#version-badge, #version-badge-2').forEach(el => {
+  document.querySelectorAll('#version-badge-2').forEach(el => {
     if (el) el.textContent = 'v' + APP_VERSION;
   });
 }
