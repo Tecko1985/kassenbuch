@@ -1,9 +1,9 @@
-const CACHE_NAME = 'kassenbuch-v10';
+const CACHE_NAME = 'kassenbuch-v11';
 const SHELL_FILES = [
   './',
   './index.html',
   './manifest.json',
-  './logo.png',
+  'https://sc1911heiligenstadt.github.io/logo.svg',
   './css/app.css',
   './js/ui-helpers.js',
   './js/zip-writer.js',
