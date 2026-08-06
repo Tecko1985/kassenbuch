@@ -1,40 +1,21 @@
-# Kassenbuch (v1.0)
+# 💶 Kassenbuch
 
-Persönliches Kassenbuch (Haushaltsbuch) als clientseitige PWA – läuft komplett lokal im Browser, ohne Backend und ohne Login. Gedacht für die Nutzung auf dem iPad (als Homescreen-Icon installierbar), funktioniert aber in jedem modernen Browser.
+Einnahmen und Ausgaben erfassen und gegenrechnen.
 
-## Funktionen
+**➡️ [Kassenbuch öffnen](https://sc1911heiligenstadt.github.io/kassenbuch/)**
 
-- Buchungen (Einnahme / Ausgabe / Umbuchung) mit Datum, Betrag, Kategorie, Beschreibung
-- Frei anlegbare/löschbare Kategorien
-- Mehrere Konten/Kassen mit eigenem Saldo, Umbuchungen zwischen Konten
-- Monatliche Budgets pro Kategorie mit Fortschrittsanzeige
-- Übersicht mit Gesamtsaldo und Monatsstatistik
-- Belegfotos zu Buchungen (Kamera/Fotomediathek), lokal gespeichert und mit der Buchung verknüpft
-- Daten bleiben rein lokal (`localStorage`) – JSON-Export/Import als manuelles Backup, CSV-Export, automatische Backup-Historie
-- Offline-fähig (Service Worker, Web App Manifest)
+## Zugang
 
-## Live-Version
+Dieses Werkzeug braucht keine Anmeldung über das Vereinskonto.
 
-- https://sc1911heiligenstadt.github.io/kassenbuch/
+## Lokal starten
 
-Wird automatisch per GitHub Actions (`.github/workflows/pages.yml`) bei jedem Push auf `main` auf GitHub Pages deployed.
+Über den Eintrag `kassenbuch` in `E:\.claude\launch.json` — der Server läuft dann auf `http://localhost:8420/`.
 
-## Lokal entwickeln/testen
+## Technik
 
-Kein Build-Schritt nötig – einfach `index.html` über einen lokalen Webserver ausliefern (für Service-Worker-Tests reicht `file://` nicht aus):
+Vanilla JavaScript ohne Build-Schritt — die Dateien werden so ausgeliefert, wie sie im Repo liegen. Veröffentlicht über GitHub Pages.
 
-```
-powershell -File serve.ps1 -Port 8420
-```
+---
 
-Danach `http://localhost:8420` öffnen.
-
-## Auf dem iPad installieren
-
-Live-URL in Safari öffnen → Teilen-Menü → „Zum Home-Bildschirm“.
-
-**Wichtig:** Safaris „Intelligent Tracking Prevention“ löscht script-gespeicherte Daten (`localStorage`, IndexedDB – also auch alle Buchungen und Belegfotos) automatisch, wenn die Seite 7 Tage lang nicht geöffnet wurde. Als Home-Bildschirm-App zählt das nicht mehr als reiner Safari-Tab, daher ist die Installation auf dem Home-Bildschirm nicht nur praktisch, sondern auch wichtig für die Datensicherheit. Zusätzlich regelmäßig ein JSON-Backup anlegen (Einstellungen → „Datei anlegen“).
-
-## Datenschutz
-
-Es werden keine Finanzdaten im Repo oder auf einem Server gespeichert – alles bleibt lokal im Browser-Speicher des jeweiligen Geräts. Belegfotos werden lokal in IndexedDB gespeichert (komprimiert, max. 1280px) und sind **nicht** im JSON-Export enthalten – sie bleiben an das jeweilige Gerät/den jeweiligen Browser gebunden.
+Ein Werkzeug des 1. SC 1911 Heiligenstadt. Alle Werkzeuge auf einen Blick: [Tools-Übersicht](https://sc1911heiligenstadt.github.io/ToolsUebersicht/) · Erklärungen im [Toolbox Wiki](https://sc1911heiligenstadt.github.io/Vereinswiki/).
