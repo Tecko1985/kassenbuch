@@ -1,6 +1,6 @@
 const APP_VERSION = '1.0';
 
-const CHANGELOG = [
+const APP_CHANGELOG = [
   {
     version: '1.0',
     groups: [
@@ -15,23 +15,24 @@ const CHANGELOG = [
       {
         title: 'Überblick behalten',
         items: [
+          'Übersicht mit Gesamtsaldo sowie Einnahmen, Ausgaben und Differenz des laufenden Monats.',
+          'Buchungsliste nach Monat, Konto und Kategorie eingrenzen.',
           'Monatliche Budgets je Kategorie mit Fortschrittsanzeige.',
-          'Übersicht mit Gesamtsaldo und Monatsstatistik.',
         ],
       },
       {
         title: 'Sichern',
         items: [
           'Export und Import als JSON-Datei, Export als CSV für Excel.',
-          'Automatische Backup-Historie.',
-          'Funktioniert offline und lässt sich auf den Home-Bildschirm legen.',
+          'Automatische Backup-Historie — jeder gesicherte Stand lässt sich wiederherstellen oder als Datei herunterladen.',
+          'Alle Belegfotos gebündelt als ZIP-Datei sichern; die Bildqualität ist einstellbar.',
         ],
       },
       {
-        title: 'Bedienung am Handy',
+        title: 'Unterwegs',
         items: [
-          'Eingabefelder sind mindestens 16 Pixel groß, damit der iPhone-Browser beim Antippen nicht ungefragt in die Seite hineinzoomt und verschoben stehen bleibt.',
-          'Die Kopfzeile bricht auf schmalen Bildschirmen um, statt seitlich herauszuragen und den Titel anzuschneiden.',
+          'Funktioniert offline und lässt sich auf den Home-Bildschirm legen.',
+          'Alle Daten bleiben auf diesem Gerät — es gibt keinen Server und kein Konto.',
         ],
       },
     ],

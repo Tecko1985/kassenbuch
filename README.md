@@ -4,7 +4,10 @@ Einnahmen und Ausgaben erfassen und gegenrechnen — über mehrere **Konten**
 hinweg, mit **Kategorien** und einem **Monatslimit** je Budget. Ein privates
 Werkzeug, kein Vereinsdokument.
 
-**➡️ [Kassenbuch öffnen](https://sc1911heiligenstadt.github.io/kassenbuch/)**
+**➡️ [Kassenbuch öffnen](https://tecko1985.github.io/kassenbuch/)**
+
+> Das Kassenbuch liegt seit dem 01.09.2026 im privaten Bereich. Die alte Adresse
+> `sc1911heiligenstadt.github.io/kassenbuch/` leitet nur noch hierher weiter.
 
 ## Was erfasst wird
 
@@ -15,6 +18,36 @@ Eine Buchung trägt **Datum**, **Betrag (€)**, eine **Beschreibung**, eine
 Ein Konto hat einen **Namen**, ein **Icon (Emoji)** und einen **Startsaldo (€)**;
 je **Budget** lässt sich ein **Monatslimit (€)** setzen, an dem sich messen
 lässt, ob der Monat im Rahmen bleibt.
+
+## Die Reiter
+
+| Reiter | Wofür |
+|---|---|
+| 🏠 Übersicht | Gesamtsaldo über alle Konten, Einnahmen, Ausgaben und Differenz des laufenden Monats, dazu die letzten Buchungen |
+| 📋 Buchungen | Die vollständige Liste, eingrenzbar nach Monat, Konto und Kategorie |
+| 🎯 Budgets | Monatslimit je Kategorie mit Fortschrittsanzeige |
+| 💳 Konten | Konten und Kassen anlegen, umbenennen, Startsaldo setzen |
+| ⚙️ Einstellungen | Kategorien pflegen, Sicherungen, Belegfotos, Exporte |
+| ℹ️ Info | Was die App kann, und der Datenschutzhinweis |
+
+## Sichern und Weitergeben
+
+Unter **Einstellungen** lässt sich der komplette Stand als JSON-Datei sichern
+und wieder einlesen, und die Buchungen lassen sich als CSV für Excel
+exportieren. Zusätzlich legt die App automatisch Sicherungen an — jeder Stand
+lässt sich daraus wiederherstellen oder einzeln herunterladen. Belegfotos liegen
+getrennt davon im Gerätespeicher; sie lassen sich gebündelt als ZIP-Datei
+sichern, in der Bildqualität einstellen oder komplett löschen.
+
+## Wo die Daten liegen
+
+Alles bleibt **auf diesem Gerät** — Buchungen, Konten und Budgets im Browser-
+Speicher, die Belegfotos in der Gerätedatenbank. Es gibt keinen Server und kein
+Konto, also auch keinen Abgleich zwischen zwei Geräten. Denk deshalb an
+regelmäßige Sicherungen.
+
+Die Seite ist als App installierbar: Sie lässt sich auf den Home-Bildschirm
+legen und funktioniert danach auch ohne Internet.
 
 ## Wichtig: nicht die Vereinskasse
 
@@ -36,6 +69,14 @@ bewusst nicht auf der Kachelübersicht.
 ## Technik
 
 Vanilla JavaScript ohne Build-Schritt — die Dateien werden so ausgeliefert, wie sie im Repo liegen. Veröffentlicht über GitHub Pages.
+
+Statt `?v=`-Anhängseln an den Dateinamen sorgt hier der Service Worker `sw.js`
+für frische Dateien: Er hält die Dateiliste `SHELL_FILES` unter dem Namen in
+`CACHE_NAME` vor. Wird `CACHE_NAME` hochgezählt, verwirft der Browser den alten
+Stand und lädt alles neu. **Bei jeder Änderung an einer ausgelieferten Datei
+muss `CACHE_NAME` also mit hochgezählt werden** — sonst bekommen bereits
+installierte Geräte die Änderung nicht zu sehen. Neue Dateien gehören
+zusätzlich in `SHELL_FILES`.
 
 ---
 
