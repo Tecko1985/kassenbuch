@@ -10,6 +10,7 @@ const VIEW_RENDERERS = {
 };
 
 function switchView(view) {
+  flushNotes();
   activeView = view;
   document.querySelectorAll('.view').forEach(el => el.classList.toggle('active', el.dataset.view === view));
   document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.view === view));
@@ -17,6 +18,7 @@ function switchView(view) {
 }
 
 function rerenderAll() {
+  flushNotes();
   updateHeaderBalance();
   VIEW_RENDERERS[activeView]();
 }
@@ -34,6 +36,12 @@ function init() {
   wireAccountModal();
   wireBudgetModal();
   wireImportInput();
+
+  // iOS friert die PWA beim Wegwischen ein, ohne 'unload' zu feuern.
+  window.addEventListener('pagehide', flushNotes);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) flushNotes();
+  });
 
   switchView('uebersicht');
   updateHeaderBalance();

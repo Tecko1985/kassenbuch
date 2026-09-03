@@ -2,6 +2,18 @@ const APP_VERSION = '1.0';
 
 const APP_CHANGELOG = [
   {
+    version: '1.1',
+    groups: [
+      {
+        title: 'Neu',
+        items: [
+          'Notizfeld unten auf der Übersicht — für Merkposten, offene Beträge und was noch zu buchen ist.',
+          'Die Notiz speichert sich beim Tippen von selbst und liegt mit in der JSON-Sicherung und in der Backup-Historie.',
+        ],
+      },
+    ],
+  },
+  {
     version: '1.0',
     groups: [
       {

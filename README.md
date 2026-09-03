@@ -23,12 +23,20 @@ lässt, ob der Monat im Rahmen bleibt.
 
 | Reiter | Wofür |
 |---|---|
-| 🏠 Übersicht | Gesamtsaldo über alle Konten, Einnahmen, Ausgaben und Differenz des laufenden Monats, dazu die letzten Buchungen |
+| 🏠 Übersicht | Gesamtsaldo über alle Konten, Einnahmen, Ausgaben und Differenz des laufenden Monats, die letzten Buchungen und unten ein Notizfeld |
 | 📋 Buchungen | Die vollständige Liste, eingrenzbar nach Monat, Konto und Kategorie |
 | 🎯 Budgets | Monatslimit je Kategorie mit Fortschrittsanzeige |
 | 💳 Konten | Konten und Kassen anlegen, umbenennen, Startsaldo setzen |
 | ⚙️ Einstellungen | Kategorien pflegen, Sicherungen, Belegfotos, Exporte |
 | ℹ️ Info | Was die App kann, und der Datenschutzhinweis |
+
+## Notizen
+
+Ganz unten auf der **Übersicht** liegt ein Feld für freien Text — für
+Merkposten, offene Beträge oder was noch zu buchen ist. Es speichert sich beim
+Tippen von selbst; unter dem Feld steht kurz **Gespeichert ✓**, sobald das
+passiert ist. Die Notiz wandert mit in die JSON-Sicherung und in die
+automatischen Sicherungen.
 
 ## Sichern und Weitergeben
 
