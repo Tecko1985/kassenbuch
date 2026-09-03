@@ -6,6 +6,7 @@ const STORAGE_KEYS = {
   budgets: 'kassenbuch_budgets',
   backups: 'kassenbuch_backups',
   receiptQuality: 'kassenbuch_receipt_quality',
+  notes: 'kassenbuch_notes',
 };
 
 const RECEIPT_QUALITY_PRESETS = {
@@ -57,6 +58,9 @@ function seedDefaultsIfEmpty() {
   }
   if (localStorage.getItem(STORAGE_KEYS.backups) === null) {
     saveJson(STORAGE_KEYS.backups, []);
+  }
+  if (localStorage.getItem(STORAGE_KEYS.notes) === null) {
+    saveJson(STORAGE_KEYS.notes, '');
   }
 }
 
@@ -130,15 +134,23 @@ function deleteBudget(category) {
   saveBudgets(getBudgets().filter(b => b.category !== category));
 }
 
+// ── Notizen ─────────────────────────────────────────────────────────────
+function getNotes() {
+  const v = loadJson(STORAGE_KEYS.notes, '');
+  return typeof v === 'string' ? v : '';
+}
+function saveNotes(text) { saveJson(STORAGE_KEYS.notes, String(text ?? '')); }
+
 // ── Full data export/import (used by Export/Import & auto-backups) ───────
 function getAllData() {
   return {
-    version: 1,
+    version: 2,
     exportedAt: new Date().toISOString(),
     accounts: getAccounts(),
     categories: { income: getCategories('income'), expense: getCategories('expense') },
     transactions: getTransactions(),
     budgets: getBudgets(),
+    notes: getNotes(),
   };
 }
 
@@ -149,6 +161,9 @@ function restoreAllData(data) {
   saveCategories('expense', data.categories?.expense ?? []);
   saveTransactions(Array.isArray(data.transactions) ? data.transactions : []);
   saveBudgets(Array.isArray(data.budgets) ? data.budgets : []);
+  // Sicherungen vor Version 2 kennen kein Notizfeld -- dann die vorhandene
+  // Notiz stehen lassen statt sie still zu leeren.
+  if (typeof data.notes === 'string') saveNotes(data.notes);
 }
 
 // ── Backup history ───────────────────────────────────────────────────────
