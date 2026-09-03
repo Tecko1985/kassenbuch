@@ -31,24 +31,6 @@ html, body {
 
 button, input, select { font-family: inherit; }
 
-.back-to-dashboard {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #fff;
-  text-decoration: none;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 6px 14px;
-  border-radius: 999px;
-  white-space: nowrap;
-  flex: 0 0 auto;
-  transition: background 0.15s ease;
-}
-.back-to-dashboard:hover { background: rgba(255, 255, 255, 0.28); text-decoration: none; }
-
 .app-header {
   position: sticky;
   top: 0;
@@ -56,7 +38,7 @@ button, input, select { font-family: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Titel, Dashboard-Pille und Kontostand passen auf schmalen Handys nicht in
+  /* Titel und Kontostand passen auf schmalen Handys nicht immer in
      eine Zeile. Ohne Umbruch ragt der Header beidseitig heraus (justify-content
      zentriert den Überhang) und der Titel wird links angeschnitten. */
   flex-wrap: wrap;

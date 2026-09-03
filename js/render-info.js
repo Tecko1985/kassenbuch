@@ -2,6 +2,17 @@ const APP_VERSION = '1.0';
 
 const APP_CHANGELOG = [
   {
+    version: '1.2',
+    groups: [
+      {
+        title: 'Geändert',
+        items: [
+          'Der Knopf „Zurück zum Dashboard“ oben ist weg — das Kassenbuch ist ein eigenständiges Werkzeug und hängt an keiner Tool-Übersicht.',
+        ],
+      },
+    ],
+  },
+  {
     version: '1.1',
     groups: [
       {
