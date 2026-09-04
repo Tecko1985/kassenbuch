@@ -74,32 +74,32 @@
       <input type="hidden" id="txnId" />
       <input type="hidden" id="txnType" value="expense" />
 
-      <label>Betrag (€)</label>
+      <label for="txnAmount">Betrag (€)</label>
       <input type="number" id="txnAmount" inputmode="decimal" step="0.01" min="0" placeholder="0,00" required />
 
-      <label>Datum</label>
+      <label for="txnDate">Datum</label>
       <input type="date" id="txnDate" required />
 
       <div class="field-group" id="txnAccountGroup">
-        <label>Konto</label>
+        <label for="txnAccount">Konto</label>
         <select id="txnAccount"></select>
       </div>
 
       <div class="field-group" id="txnFromAccountGroup" style="display:none">
-        <label>Von Konto</label>
+        <label for="txnFromAccount">Von Konto</label>
         <select id="txnFromAccount"></select>
       </div>
       <div class="field-group" id="txnToAccountGroup" style="display:none">
-        <label>Auf Konto</label>
+        <label for="txnToAccount">Auf Konto</label>
         <select id="txnToAccount"></select>
       </div>
 
       <div class="field-group" id="txnCategoryGroup">
-        <label>Kategorie</label>
+        <label for="txnCategory">Kategorie</label>
         <select id="txnCategory"></select>
       </div>
 
-      <label>Beschreibung</label>
+      <label for="txnDesc">Beschreibung</label>
       <input type="text" id="txnDesc" placeholder="z.B. Wocheneinkauf" />
 
       <label>Beleg</label>
@@ -129,11 +129,11 @@
     <h2>Konto</h2>
     <form id="accForm">
       <input type="hidden" id="accId" />
-      <label>Name</label>
+      <label for="accName">Name</label>
       <input type="text" id="accName" placeholder="z.B. Bar" required />
-      <label>Icon (Emoji)</label>
+      <label for="accIcon">Icon (Emoji)</label>
       <input type="text" id="accIcon" placeholder="💶" maxlength="4" />
-      <label>Startsaldo (€)</label>
+      <label for="accStartBalance">Startsaldo (€)</label>
       <input type="number" id="accStartBalance" inputmode="decimal" step="0.01" placeholder="0,00" />
       <div class="modal-actions">
         <button type="button" class="btn-secondary" id="accArchiveBtn" style="display:none">Archivieren</button>
@@ -150,9 +150,9 @@
     <div class="modal-handle"></div>
     <h2>Budget</h2>
     <form id="budgetForm">
-      <label>Kategorie</label>
+      <label for="budgetCategory">Kategorie</label>
       <select id="budgetCategory"></select>
-      <label>Monatslimit (€)</label>
+      <label for="budgetLimit">Monatslimit (€)</label>
       <input type="number" id="budgetLimit" inputmode="decimal" step="0.01" min="0" placeholder="0,00" required />
       <div class="modal-actions">
         <button type="button" class="btn-secondary" id="budgetDeleteBtn" style="display:none">Löschen</button>
