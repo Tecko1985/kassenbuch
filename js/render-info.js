@@ -2,6 +2,18 @@ const APP_VERSION = '1.0';
 
 const APP_CHANGELOG = [
   {
+    version: '1.5',
+    groups: [
+      {
+        title: 'Behoben',
+        items: [
+          'Sechs Knöpfe trugen nur ein Symbol und hatten damit für ein Vorleseprogramm keinen Namen: die beiden Pfeile zum Monatswechsel bei den Budgets, das Herunterladen und das Löschen einer Sicherung, und die beiden Plus-Knöpfe für eine neue Kategorie.',
+          'Sie tragen jetzt einen Namen, der vorgelesen wird. Am Bildschirm ändert sich nichts.',
+        ],
+      },
+    ],
+  },
+  {
     version: '1.4',
     groups: [
       {

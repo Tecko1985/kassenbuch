@@ -7,8 +7,8 @@ function renderEinstellungen() {
       <span>${new Date(b.date).toLocaleString('de-DE')}</span>
       <span style="display:flex;gap:6px">
         <button type="button" class="backup-restore">Wiederherstellen</button>
-        <button type="button" class="backup-download">⬇</button>
-        <button type="button" class="backup-delete">✕</button>
+        <button type="button" class="backup-download" aria-label="Sicherung herunterladen">⬇</button>
+        <button type="button" class="backup-delete" aria-label="Sicherung löschen">✕</button>
       </span>
     </div>
   `).join('') : `<div class="empty-state">Noch keine automatischen Backups vorhanden.</div>`;
@@ -19,7 +19,7 @@ function renderEinstellungen() {
       ${renderCatChips('income')}
       <div class="cat-input-row">
         <input type="text" id="incCatNew" placeholder="Neue Kategorie…" />
-        <button type="button" id="incCatAddBtn">+</button>
+        <button type="button" id="incCatAddBtn" aria-label="Einnahmen-Kategorie hinzufügen">+</button>
       </div>
     </div>
 
@@ -28,7 +28,7 @@ function renderEinstellungen() {
       ${renderCatChips('expense')}
       <div class="cat-input-row">
         <input type="text" id="expCatNew" placeholder="Neue Kategorie…" />
-        <button type="button" id="expCatAddBtn">+</button>
+        <button type="button" id="expCatAddBtn" aria-label="Ausgaben-Kategorie hinzufügen">+</button>
       </div>
     </div>
 

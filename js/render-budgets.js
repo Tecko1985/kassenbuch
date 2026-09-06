@@ -26,9 +26,9 @@ function renderBudgets() {
     <div class="card">
       <h2>Budgets</h2>
       <div class="month-switcher">
-        <button type="button" id="budgetPrevMonth">‹</button>
+        <button type="button" id="budgetPrevMonth" aria-label="Vorheriger Monat">‹</button>
         <span>${monthLabel}</span>
-        <button type="button" id="budgetNextMonth">›</button>
+        <button type="button" id="budgetNextMonth" aria-label="Folgender Monat">›</button>
       </div>
       <div id="budgetList">${itemsHtml}</div>
       <div class="modal-actions" style="margin-top:16px">
