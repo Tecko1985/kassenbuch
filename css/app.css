@@ -4,7 +4,7 @@
   --color-primary: #1a56a0;
   --color-primary-dark: #123e74;
   --color-text: #1c1c1e;
-  --color-text-muted: #6b7280;
+  --color-text-muted: #676e7c;
   --color-border: #e2e6ee;
   --color-income: #1f9d55;
   --color-expense: #d64545;
@@ -551,3 +551,7 @@ form select {
 @media (max-width: 820px) {
   input, select, textarea { font-size: 16px !important; }
 }
+/* ⚠️ Ohne diese Regel nimmt der Browser seine Vorgabe #757575 -- auf weissem
+   Grund sind das nur 4.07:1, WCAG AA verlangt 4.5. Gemessen am 06.09.2026.
+   #676e7c bringt 5.12:1 und bleibt im Grauton der Flotte (--muted). */
+::placeholder { color: #676e7c; opacity: 1; }
