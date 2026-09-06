@@ -27,7 +27,7 @@ function renderUebersicht() {
     </div>
     <div class="card notes-card">
       <h2>Notizen</h2>
-      <textarea class="notes-input" id="notesInput" rows="3"
+      <textarea class="notes-input" id="notesInput" aria-label="Merkposten" rows="3"
                 placeholder="Merkposten, offene Beträge, was noch zu buchen ist …"></textarea>
       <div class="notes-hint" id="notesHint">Wird beim Tippen automatisch gespeichert.</div>
     </div>
