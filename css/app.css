@@ -542,6 +542,13 @@ form select {
 .changelog-group-title { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
 .changelog-group ul { margin: 0; padding-left: 20px; color: var(--color-text-muted); line-height: 1.6; }
 
+/* Die Karte "Funktionen" im Info-Reiter teilt sich die Klassen mit der
+   frueheren Aenderungsliste. Die Schriftgroesse muss hier stehen: sie haengt
+   sonst an .changelog-entry, und genau die Klasse hat diese Karte nicht --
+   ohne die Angabe rendert sie eine Stufe groesser als der Rest der Karte. */
+#funktionen-list { display: flex; flex-direction: column; gap: 18px; font-size: 14px; }
+#funktionen-list .changelog-group { margin-bottom: 0; }
+
 /* ---------- Handy: Formularfelder mindestens 16px ----------
    iOS Safari zoomt beim Antippen eines Feldes unter 16px automatisch in die
    Seite hinein — und wieder heraus zoomt es nicht. Die Feldregeln weiter oben
