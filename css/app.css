@@ -1,7 +1,7 @@
 :root {
   --color-bg: #eef1f6;
   --color-surface: #ffffff;
-  --color-primary: #1a56a0;
+  --color-primary: #1b2d4f;
   --color-primary-dark: #123e74;
   --color-text: #1c1c1e;
   --color-text-muted: #676e7c;
@@ -157,7 +157,7 @@ button, input, select { font-family: inherit; }
   color: #fff;
   font-size: 28px;
   border: none;
-  box-shadow: 0 4px 10px rgba(26,86,160,0.4);
+  box-shadow: 0 4px 10px rgba(27,45,79,0.4);
   z-index: 9;
   line-height: 1;
 }
