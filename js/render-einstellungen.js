@@ -18,7 +18,7 @@ function renderEinstellungen() {
       <h2>Kategorien · Einnahmen</h2>
       ${renderCatChips('income')}
       <div class="cat-input-row">
-        <input type="text" id="incCatNew" placeholder="Neue Kategorie…" />
+        <input type="text" id="incCatNew" placeholder="Neue Kategorie…" aria-label="Neue Einnahmen-Kategorie" />
         <button type="button" id="incCatAddBtn" aria-label="Einnahmen-Kategorie hinzufügen">+</button>
       </div>
     </div>
@@ -27,7 +27,7 @@ function renderEinstellungen() {
       <h2>Kategorien · Ausgaben</h2>
       ${renderCatChips('expense')}
       <div class="cat-input-row">
-        <input type="text" id="expCatNew" placeholder="Neue Kategorie…" />
+        <input type="text" id="expCatNew" placeholder="Neue Kategorie…" aria-label="Neue Ausgaben-Kategorie" />
         <button type="button" id="expCatAddBtn" aria-label="Ausgaben-Kategorie hinzufügen">+</button>
       </div>
     </div>
@@ -47,7 +47,7 @@ function renderEinstellungen() {
         <span style="color:var(--color-text-muted);font-size:13px;text-align:right">Nur lokal auf diesem Gerät<br/>(Browser-Speicher, IndexedDB)</span>
       </div>
       <div class="settings-row">
-        <span>Bildqualität</span>
+        <label for="receiptQualitySelect">Bildqualität</label>
         <select id="receiptQualitySelect">
           ${Object.entries(RECEIPT_QUALITY_PRESETS).map(([key, p]) =>
             `<option value="${key}" ${getReceiptQuality() === key ? 'selected' : ''}>${escapeHtml(p.label)}</option>`).join('')}

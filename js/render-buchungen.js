@@ -37,9 +37,9 @@ function renderBuchungen() {
     <div class="card">
       <h2>Buchungen</h2>
       <div class="filter-row">
-        <select id="filterMonth"><option value="">Alle Monate</option>${monthOptions}</select>
-        <select id="filterAccount"><option value="">Alle Konten</option>${accountOptions}</select>
-        <select id="filterCategory"><option value="">Alle Kategorien</option>${categoryOptions}</select>
+        <select id="filterMonth" aria-label="Nach Monat filtern"><option value="">Alle Monate</option>${monthOptions}</select>
+        <select id="filterAccount" aria-label="Nach Konto filtern"><option value="">Alle Konten</option>${accountOptions}</select>
+        <select id="filterCategory" aria-label="Nach Kategorie filtern"><option value="">Alle Kategorien</option>${categoryOptions}</select>
       </div>
       <div class="txn-list" id="txnList">${listHtml}</div>
     </div>
