@@ -24,6 +24,14 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      # Ohne Jekyll liest niemand die _config.yml - ihr exclude wirkt hier
+      # nicht. Was nicht ausgeliefert werden soll, fliegt deshalb vor dem
+      # Upload aus der Arbeitskopie des Runners (das Repo bleibt unberuehrt).
+      # .git und .github laesst upload-pages-artifact selbst weg.
+      # Nur eintragen, was keine Seite und kein Skript laedt (sw.js SHELL_FILES!).
+      - name: Nicht ausliefern
+        run: rm -f serve.ps1 _config.yml README.md .gitignore
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

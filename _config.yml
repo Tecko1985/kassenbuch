@@ -9,5 +9,10 @@
 # und muss ausgeliefert bleiben.
 #
 # Angelegt bei der Abnahme am 17.09.2026.
+#
+# ⚠️ WIRKT HIER NICHT: kassenbuch baut ueber einen eigenen Workflow ohne
+# Jekyll (.github/workflows/pages.yml). Ausgeschlossen wird dort im Schritt
+# "Nicht ausliefern" per rm - neue Eintraege DORT nachtragen. Diese Liste
+# bleibt nur als Verzeichnis fuer die Flotten-Proben stehen.
 exclude:
   - "serve.ps1"
