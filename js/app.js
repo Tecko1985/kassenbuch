@@ -13,7 +13,12 @@ function switchView(view) {
   flushNotes();
   activeView = view;
   document.querySelectorAll('.view').forEach(el => el.classList.toggle('active', el.dataset.view === view));
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.view === view));
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    const aktiv = btn.dataset.view === view;
+    btn.classList.toggle('active', aktiv);
+    // Vorleseprogramm: der aktive Reiter ist nicht nur an der Farbe erkennbar (Abnahme 21.09.2026, D8).
+    if (aktiv) btn.setAttribute('aria-current', 'page'); else btn.removeAttribute('aria-current');
+  });
   VIEW_RENDERERS[view]();
 }
 
