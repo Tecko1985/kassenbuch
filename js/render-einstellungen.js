@@ -174,6 +174,10 @@ function exportJson() {
   toast('Export gestartet');
 }
 
+function csvBetrag(n) {
+  return Number(n || 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2, useGrouping: false });
+}
+
 function exportCsv() {
   const accounts = getAccounts();
   const accName = id => accounts.find(a => a.id === id)?.name || '';
@@ -181,7 +185,10 @@ function exportCsv() {
   for (const t of sortedTransactionsDesc()) {
     const typeLabel = t.type === 'income' ? 'Einnahme' : t.type === 'expense' ? 'Ausgabe' : 'Umbuchung';
     const account = t.type === 'transfer' ? `${accName(t.fromAccountId)} → ${accName(t.toAccountId)}` : accName(t.accountId);
-    rows.push([typeLabel, t.date, t.category || '', account, t.desc || '', t.amount.toFixed(2)]);
+    // Betrag im deutschen Format (Komma, ohne Tausenderpunkt): das CSV ist mit ';' fuer
+    // deutsches Excel gebaut, und dort wurde "12.05" zum Datum und "12.50" zu Text
+    // (Bugjagd 23.09.2026, T7-6). Vorbild: csvFmt in Personalkosten.
+    rows.push([typeLabel, t.date, t.category || '', account, t.desc || '', csvBetrag(t.amount)]);
   }
   const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(';')).join('\r\n');
   download(`kassenbuch_${todayIso()}.csv`, 'text/csv', '﻿' + csv);

@@ -78,6 +78,17 @@ const APP_FUNKTIONEN = [
 
 const APP_CHANGELOG = [
   {
+    version: '1.7',
+    groups: [
+      {
+        title: 'CSV-Export für Excel',
+        items: [
+          'Die Beträge im CSV-Export stehen jetzt mit Komma (12,50). Vorher stand dort ein Punkt, und das deutsche Excel machte aus „12.05“ den 12. Mai und aus „12.50“ einen Text, der in keiner Summe mitzählte.',
+        ],
+      },
+    ],
+  },
+  {
     version: '1.6',
     groups: [
       {
