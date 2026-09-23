@@ -78,6 +78,19 @@ const APP_FUNKTIONEN = [
 
 const APP_CHANGELOG = [
   {
+    version: '1.8',
+    groups: [
+      {
+        title: 'Wenn der Speicher voll wird',
+        items: [
+          'Ist der Speicher des Geräts voll, startet die App trotzdem und meldet es. Vorher blieb die Seite leer — ohne Reiter und ohne Weg zum Export.',
+          'Damit neue Buchungen Platz haben, verwirft die App dann die älteste automatische Sicherung und sagt es dazu.',
+          'Scheitert das Speichern einer Buchung doch, bleibt der Dialog offen und es kommt eine Meldung, statt dass nichts passiert.',
+        ],
+      },
+    ],
+  },
+  {
     version: '1.7',
     groups: [
       {

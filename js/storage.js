@@ -34,8 +34,44 @@ function loadJson(key, fallback) {
   }
 }
 
+// ⚠️ Speicher voll (Bugjagd 23.09.2026, T7-7): die Backup-Historie (bis zu
+// MAX_BACKUPS volle Kopien) liegt im selben localStorage wie der Bestand und
+// ist sein Vielfaches. Reisst das Kontingent (~5 Mio. Zeichen), hat der
+// Bestand Vorrang: die aelteste Sicherung wird verworfen und erneut versucht.
+// Erst wenn keine Sicherung mehr da ist, geht der Fehler als verstaendliche
+// Meldung an den Aufrufer.
+function istSpeicherVoll(e) {
+  return !!e && (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED' || e.code === 22 || e.code === 1014);
+}
+
+const SPEICHER_VOLL_TEXT = 'Der Speicher dieses Geräts ist voll. Bitte unter Einstellungen „Backup-Datei anlegen“ und alte Belegfotos löschen.';
+
+let sicherungVerworfenGemeldet = false;
+
+function verwirfAeltesteSicherung() {
+  const backups = loadJson(STORAGE_KEYS.backups, []);
+  if (!Array.isArray(backups) || !backups.length) return false;
+  backups.shift();
+  // Kleiner schreiben passt immer.
+  localStorage.setItem(STORAGE_KEYS.backups, JSON.stringify(backups));
+  if (!sicherungVerworfenGemeldet && typeof toast === 'function') {
+    sicherungVerworfenGemeldet = true;
+    toast('Speicher fast voll — die älteste automatische Sicherung wurde verworfen. Bitte bald „Backup-Datei anlegen“.', 6000);
+  }
+  return true;
+}
+
 function saveJson(key, data) {
-  localStorage.setItem(key, JSON.stringify(data));
+  const text = JSON.stringify(data);
+  for (;;) {
+    try {
+      localStorage.setItem(key, text);
+      return;
+    } catch (e) {
+      if (!istSpeicherVoll(e)) throw e;
+      if (key === STORAGE_KEYS.backups || !verwirfAeltesteSicherung()) throw new Error(SPEICHER_VOLL_TEXT);
+    }
+  }
 }
 
 function seedDefaultsIfEmpty() {
@@ -180,11 +216,24 @@ function restoreAllData(data) {
 // ── Backup history ───────────────────────────────────────────────────────
 function getBackups() { return loadJson(STORAGE_KEYS.backups, []); }
 
+// Passt die neue Sicherung nicht mehr in den Speicher, fallen die aeltesten
+// heraus, bis sie passt. Passt sie auch allein nicht, bleibt die gespeicherte
+// Historie unveraendert und es kommt eine verstaendliche Meldung (vorher brach
+// init() an dieser Stelle ab, und die App startete nicht mehr).
 function pushBackup() {
   const backups = getBackups();
   backups.push({ date: new Date().toISOString(), data: getAllData() });
   while (backups.length > MAX_BACKUPS) backups.shift();
-  saveJson(STORAGE_KEYS.backups, backups);
+  for (;;) {
+    try {
+      localStorage.setItem(STORAGE_KEYS.backups, JSON.stringify(backups));
+      return;
+    } catch (e) {
+      if (!istSpeicherVoll(e)) throw e;
+      if (backups.length <= 1) throw new Error(SPEICHER_VOLL_TEXT);
+      backups.shift();
+    }
+  }
 }
 
 function deleteBackup(date) {

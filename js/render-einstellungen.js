@@ -80,7 +80,11 @@ function renderEinstellungen() {
   document.getElementById('importJsonBtn').addEventListener('click', () => document.getElementById('importFileInput').click());
   document.getElementById('exportCsvBtn').addEventListener('click', exportCsv);
   document.getElementById('createBackupBtn').addEventListener('click', () => {
-    pushBackup();
+    try {
+      pushBackup();
+    } catch (err) {
+      return toast('Backup nicht angelegt: ' + err.message, 8000);
+    }
     toast('Backup angelegt');
     renderEinstellungen();
   });
@@ -230,8 +234,9 @@ function wireImportInput() {
         restoreAllData(data);
         toast('Import erfolgreich');
         rerenderAll();
-      } catch {
-        toast('Datei konnte nicht gelesen werden.');
+      } catch (err) {
+        // Speicher voll ist etwas anderes als eine kaputte Datei (T7-7).
+        toast(err instanceof SyntaxError ? 'Datei konnte nicht gelesen werden.' : 'Import nicht möglich: ' + err.message, 8000);
       }
     };
     reader.readAsText(file);

@@ -29,9 +29,19 @@ function rerenderAll() {
 }
 
 function init() {
-  seedDefaultsIfEmpty();
+  // ⚠️ Beides darf init() nie abbrechen: vorher stand bei vollem Speicher eine
+  // leere Seite da, ohne Reiter und ohne Weg zum Export (Bugjagd 23.09.2026, T7-7).
+  try {
+    seedDefaultsIfEmpty();
+  } catch (e) {
+    toast('Speichern nicht möglich: ' + e.message, 8000);
+  }
   // Die "automatischen Backups" entstehen hier -- einmal je Tag beim Öffnen.
-  autoBackupIfDue();
+  try {
+    autoBackupIfDue();
+  } catch (e) {
+    toast('Automatische Sicherung nicht möglich: ' + e.message, 8000);
+  }
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => switchView(btn.dataset.view));

@@ -283,7 +283,13 @@ function wireTxnModal() {
       txn = { id, type, date, amount, accountId, category, desc, hasReceipt, createdAt: new Date().toISOString() };
     }
 
-    upsertTransaction(txn);
+    // Scheitert das Speichern (Speicher voll), bleibt der Dialog offen und es
+    // kommt eine Meldung -- vorher war es ein unbehandelter Fehler ohne Wort.
+    try {
+      upsertTransaction(txn);
+    } catch (err) {
+      return toast('Nicht gespeichert: ' + err.message, 8000);
+    }
 
     if (pendingReceiptDataUrl === null) {
       await deleteReceipt(id);
