@@ -118,8 +118,21 @@ function renderEinstellungen() {
       if (!confirm('Diesen Backup-Stand wiederherstellen? Aktuelle Daten werden überschrieben.')) return;
       const backup = getBackups().find(b => b.date === date);
       if (backup) {
-        restoreAllData(backup.data);
-        toast('Backup wiederhergestellt');
+        // Vorher den aktuellen Stand sichern, wie beim Import. Sonst waren die
+        // Buchungen seit der letzten Tagessicherung nach einem Fehlgriff weg
+        // (Bugjagd 23.09.2026, T7-12). Die neue Sicherung verdraengt hoechstens
+        // die aelteste; die gewaehlte wird vorher herausgegriffen.
+        try {
+          pushBackup();
+        } catch (err) {
+          if (!confirm('Der aktuelle Stand konnte vorher nicht gesichert werden (' + err.message + '). Trotzdem wiederherstellen?')) return;
+        }
+        try {
+          restoreAllData(backup.data);
+        } catch (err) {
+          return toast('Wiederherstellen nicht möglich: ' + err.message, 8000);
+        }
+        toast('Backup wiederhergestellt — der vorherige Stand liegt als neueste Sicherung bereit.', 5000);
         rerenderAll();
       }
     });
@@ -229,6 +242,10 @@ function wireImportInput() {
     reader.onload = () => {
       try {
         const data = JSON.parse(reader.result);
+        if (!istKassenbuchSicherung(data)) {
+          toast('Das ist keine Kassenbuch-Sicherung — es fehlen Konten oder Buchungen. Nichts geändert.', 6000);
+          return;
+        }
         if (!confirm('Backup importieren? Aktuelle Daten werden überschrieben.')) return;
         pushBackup();
         restoreAllData(data);

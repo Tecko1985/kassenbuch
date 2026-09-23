@@ -201,8 +201,17 @@ function getAllData() {
   };
 }
 
+// Sieht die Datei aus wie eine Kassenbuch-Sicherung? Vorher reichte gueltiges
+// JSON: eine fremde JSON-Datei leerte beim Import alle Konten, Kategorien und
+// Buchungen (Bugjagd 23.09.2026, T7-12). Pflicht sind die beiden Listen, die
+// jede Sicherung seit Version 1 traegt.
+function istKassenbuchSicherung(data) {
+  return !!data && typeof data === 'object' && !Array.isArray(data)
+    && Array.isArray(data.accounts) && Array.isArray(data.transactions);
+}
+
 function restoreAllData(data) {
-  if (!data || typeof data !== 'object') throw new Error('Ungültiges Datenformat');
+  if (!istKassenbuchSicherung(data)) throw new Error('Ungültiges Datenformat');
   saveAccounts(Array.isArray(data.accounts) ? data.accounts : []);
   saveCategories('income', data.categories?.income ?? []);
   saveCategories('expense', data.categories?.expense ?? []);

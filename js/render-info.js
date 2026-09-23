@@ -78,6 +78,18 @@ const APP_FUNKTIONEN = [
 
 const APP_CHANGELOG = [
   {
+    version: '1.9',
+    groups: [
+      {
+        title: 'Sicherungen',
+        items: [
+          'Vor dem Wiederherstellen einer Sicherung legt die App jetzt zuerst eine Sicherung des aktuellen Stands an — wie schon beim Import. Ein Fehlgriff lässt sich so rückgängig machen.',
+          'Eine Datei, die keine Kassenbuch-Sicherung ist, wird beim Import abgelehnt. Vorher leerte eine fremde JSON-Datei alle Konten, Kategorien und Buchungen.',
+        ],
+      },
+    ],
+  },
+  {
     version: '1.8',
     groups: [
       {
