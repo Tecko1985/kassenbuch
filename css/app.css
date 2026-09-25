@@ -6,11 +6,11 @@
   --color-text: #1c1c1e;
   --color-text-muted: #676e7c;
   --color-border: #e2e6ee;
-  --color-income: #1f9d55;
-  --color-expense: #d64545;
-  --color-transfer: #8b5cf6;
+  --color-income: #177a42;
+  --color-expense: #c53030;
+  --color-transfer: #7c3aed;
   --color-warn: #e0a000;
-  --color-danger: #d64545;
+  --color-danger: #c53030;
   --radius: 14px;
   --tabbar-height: 64px;
   --header-height: 56px;
