@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kassenbuch-v18';
+const CACHE_NAME = 'kassenbuch-v19';
 const SHELL_FILES = [
   './',
   './index.html',

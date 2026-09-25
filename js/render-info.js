@@ -78,6 +78,17 @@ const APP_FUNKTIONEN = [
 
 const APP_CHANGELOG = [
   {
+    version: '1.10',
+    groups: [
+      {
+        title: 'Reihenfolge innerhalb eines Tages',
+        items: [
+          'Eine bearbeitete Buchung behält ihren Platz in der Liste. Vorher sprang sie nach jedem Bearbeiten innerhalb ihres Tages ganz nach oben, als wäre sie gerade erst angelegt worden.',
+        ],
+      },
+    ],
+  },
+  {
     version: '1.9',
     groups: [
       {

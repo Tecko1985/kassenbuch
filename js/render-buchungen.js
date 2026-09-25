@@ -268,19 +268,25 @@ function wireTxnModal() {
       : pendingReceiptDataUrl !== undefined ? true
       : pendingReceiptOriginalHasReceipt;
 
+    // Beim Bearbeiten den Anlagezeitpunkt behalten: danach sortiert die Liste
+    // innerhalb eines Tages, und eine bearbeitete Buchung sprang sonst nach oben
+    // (Bugjagd 25.09.2026, T12-11). Fehlt er beim Altbestand, bleibt er weg.
+    const vorher = getTransactions().find(t => t.id === id);
+    const createdAt = vorher ? vorher.createdAt : new Date().toISOString();
+
     let txn;
     if (type === 'transfer') {
       const fromAccountId = document.getElementById('txnFromAccount').value;
       const toAccountId = document.getElementById('txnToAccount').value;
       if (!fromAccountId || !toAccountId) return toast('Bitte beide Konten wählen.');
       if (fromAccountId === toAccountId) return toast('Quelle und Ziel müssen unterschiedlich sein.');
-      txn = { id, type, date, amount, fromAccountId, toAccountId, category: null, desc, hasReceipt, createdAt: new Date().toISOString() };
+      txn = { id, type, date, amount, fromAccountId, toAccountId, category: null, desc, hasReceipt, createdAt };
     } else {
       const accountId = document.getElementById('txnAccount').value;
       const category = document.getElementById('txnCategory').value;
       if (!accountId) return toast('Bitte ein Konto wählen.');
       if (!category) return toast('Bitte eine Kategorie wählen.');
-      txn = { id, type, date, amount, accountId, category, desc, hasReceipt, createdAt: new Date().toISOString() };
+      txn = { id, type, date, amount, accountId, category, desc, hasReceipt, createdAt };
     }
 
     // Scheitert das Speichern (Speicher voll), bleibt der Dialog offen und es
