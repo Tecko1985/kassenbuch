@@ -43,6 +43,7 @@ function renderBudgets() {
 
   view.querySelectorAll('.budget-item').forEach(el => {
     el.addEventListener('click', () => openBudgetModal(el.dataset.category));
+    perTastaturKlickbar(el);
   });
 }
 

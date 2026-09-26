@@ -77,6 +77,21 @@ function downloadDataUrl(filename, dataUrl) {
   a.remove();
 }
 
+// Abnahme 25.09. (D-14): Zeilen und Karten mit nur einem click-Horcher auch per
+// Tastatur bedienbar machen -- Knopf-Rolle fuer Vorleseprogramme, Tab-Stopp,
+// Enter/Leertaste loesen den vorhandenen click aus (nur auf dem Element selbst).
+function perTastaturKlickbar(el, beschriftung) {
+  el.setAttribute('role', 'button');
+  el.setAttribute('tabindex', '0');
+  if (beschriftung) el.setAttribute('aria-label', beschriftung);
+  el.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+    if (e.target !== el) return;
+    e.preventDefault();
+    el.click();
+  });
+}
+
 function openModal(backdropId) {
   document.getElementById(backdropId).classList.add('open');
 }

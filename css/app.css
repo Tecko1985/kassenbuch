@@ -260,6 +260,11 @@ form select {
   min-height: 44px;
 }
 .txn-item:last-child { border-bottom: none; }
+/* Abnahme 25.09. (D-14): Fokusrahmen fuer die per Tastatur bedienbaren Zeilen/Karten */
+.txn-item:focus-visible, .budget-item:focus-visible, .account-card:focus-visible, #receiptPreviewImg:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
 .txn-icon { font-size: 20px; width: 28px; text-align: center; }
 .txn-main { flex: 1; min-width: 0; }
 .txn-cat { font-weight: 600; font-size: 15px; }

@@ -35,6 +35,7 @@ function renderUebersicht() {
 
   view.querySelectorAll('.txn-item').forEach(el => {
     el.addEventListener('click', () => openTxnModal({ id: el.dataset.id }));
+    perTastaturKlickbar(el);
   });
 
   wireNotes();

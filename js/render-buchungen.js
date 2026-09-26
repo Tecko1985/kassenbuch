@@ -51,6 +51,7 @@ function renderBuchungen() {
 
   view.querySelectorAll('.txn-item').forEach(el => {
     el.addEventListener('click', () => openTxnModal({ id: el.dataset.id }));
+    perTastaturKlickbar(el);
   });
 }
 
@@ -246,11 +247,22 @@ function wireTxnModal() {
     if (!src) return;
     document.getElementById('receiptLightboxImg').src = src;
     openModal('receiptLightboxBackdrop');
+    document.getElementById('receiptLightboxClose').focus();
   });
+  // Abnahme 25.09. (D-14): Beleg gross ansehen auch per Tastatur; die Grossansicht
+  // schliesst auch mit Escape, und der Fokus geht zurueck auf das Vorschaubild.
+  perTastaturKlickbar(document.getElementById('receiptPreviewImg'), 'Beleg groß ansehen');
+  const lightboxZu = () => {
+    closeModal('receiptLightboxBackdrop');
+    document.getElementById('receiptPreviewImg').focus();
+  };
 
-  document.getElementById('receiptLightboxClose').addEventListener('click', () => closeModal('receiptLightboxBackdrop'));
+  document.getElementById('receiptLightboxClose').addEventListener('click', lightboxZu);
   document.getElementById('receiptLightboxBackdrop').addEventListener('click', (e) => {
-    if (e.target.id === 'receiptLightboxBackdrop') closeModal('receiptLightboxBackdrop');
+    if (e.target.id === 'receiptLightboxBackdrop') lightboxZu();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.getElementById('receiptLightboxBackdrop').classList.contains('open')) lightboxZu();
   });
 
   document.getElementById('txnForm').addEventListener('submit', async (e) => {

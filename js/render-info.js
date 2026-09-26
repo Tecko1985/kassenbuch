@@ -78,6 +78,17 @@ const APP_FUNKTIONEN = [
 
 const APP_CHANGELOG = [
   {
+    version: '1.11',
+    groups: [
+      {
+        title: 'Bedienung per Tastatur',
+        items: [
+          'Buchungen, Budgets und Konten lassen sich auch per Tastatur öffnen: mit Tab bis zum Eintrag, dann Enter oder Leertaste. Das Belegfoto lässt sich so auch groß ansehen, Escape schließt die Großansicht wieder.',
+        ],
+      },
+    ],
+  },
+  {
     version: '1.10',
     groups: [
       {

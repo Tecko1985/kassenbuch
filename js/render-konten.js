@@ -50,6 +50,7 @@ function renderKonten() {
 
   view.querySelectorAll('.account-card').forEach(card => {
     card.addEventListener('click', () => openAccountModal(card.dataset.id));
+    perTastaturKlickbar(card);
   });
   document.getElementById('newAccountBtn').addEventListener('click', () => openAccountModal(null));
   document.getElementById('transferBtn').addEventListener('click', () => openTxnModal({ type: 'transfer' }));
