@@ -3,7 +3,7 @@ const SHELL_FILES = [
   './',
   './index.html',
   './manifest.json',
-  'https://sc1911heiligenstadt.github.io/logo.svg',
+  'https://sc1911.clubdach.de/logo.svg',
   './css/app.css',
   './js/ui-helpers.js',
   './js/zip-writer.js',
