@@ -11,7 +11,7 @@ const APP_FUNKTIONEN = [
     items: [
       'Einnahme, Ausgabe und Umbuchung zwischen zwei Konten — jeweils mit Datum, Betrag, Kategorie und Beschreibung.',
       'Der runde Knopf unten rechts legt von jedem Reiter aus eine neue Buchung an.',
-      'An jede Buchung lässt sich ein Belegfoto hängen; es wird auf 1280 Pixel verkleinert gespeichert.'
+      'An jede Buchung lässt sich ein Belegfoto hängen; es wird verkleinert gespeichert. Die Größe ist unter Einstellungen → Bildqualität wählbar (800, 1280 oder 1920 Pixel, Standard 1280).'
     ]
   },
   {
