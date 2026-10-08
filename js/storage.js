@@ -258,11 +258,27 @@ function deleteBackup(date) {
 // Ausgerechnet die iPad-Falle (ITP löscht nach 7 Tagen Inaktivität) trifft
 // dann auf eine leere Historie.
 //
-// Fenster statt Stichtag: fällig ist eine Sicherung, wenn die jüngste älter
-// als AUTO_BACKUP_MIN_STUNDEN ist. Ein Tag, an dem die App nicht geöffnet
-// wurde, holt sich beim nächsten Öffnen nach, statt still ausgelassen zu
-// werden. Kosten: ein JSON-Schnappschuss je Tag, gedeckelt durch MAX_BACKUPS.
-const AUTO_BACKUP_MIN_STUNDEN = 24;
+// Kalendertag (Europe/Berlin): fällig ist eine Sicherung beim ersten Öffnen
+// an einem Tag, an dem es noch keine gibt -- so, wie Karte und Info-Reiter es
+// zusagen. Bis 08.10.2026 galt "jüngste älter als 24 Stunden"; wer abends um
+// 19 Uhr und am nächsten Tag um 18 Uhr öffnete, bekam am zweiten Tag keinen
+// Stand (Bugjagd 08.10.d GE-F3). Ein Tag, an dem die App nicht geöffnet
+// wurde, holt sich weiterhin beim nächsten Öffnen nach. Kosten: ein
+// JSON-Schnappschuss je Tag, gedeckelt durch MAX_BACKUPS.
+function berlinTag(ms) {
+  const d = new Date(ms);
+  try {
+    // Teile einzeln zusammensetzen -- auf das Datumsformat einer Sprache ist kein Verlass.
+    const teile = {};
+    new Intl.DateTimeFormat('de-DE', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit' })
+      .formatToParts(d).forEach(t => { teile[t.type] = t.value; });
+    if (!teile.year || !teile.month || !teile.day) throw new Error('Datumsteile fehlen');
+    return `${teile.year}-${teile.month}-${teile.day}`;
+  } catch (_) {
+    // Ohne Zeitzonen-Daten: Gerätezeit (das iPad steht in Deutschland).
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+}
 
 function autoBackupIfDue(jetzt) {
   const now = Number.isFinite(jetzt) ? jetzt : Date.now();
@@ -272,7 +288,8 @@ function autoBackupIfDue(jetzt) {
   if (!getTransactions().length) return false;
   const backups = getBackups();
   const letzte = backups.length ? Date.parse(String(backups[backups.length - 1].date)) : NaN;
-  if (Number.isFinite(letzte) && now - letzte < AUTO_BACKUP_MIN_STUNDEN * 3600000) return false;
+  // >= statt !==: steht die Uhr zurück (letzte Sicherung "in der Zukunft"), nicht jedes Mal sichern.
+  if (Number.isFinite(letzte) && berlinTag(letzte) >= berlinTag(now)) return false;
   pushBackup();
   return true;
 }

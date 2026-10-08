@@ -78,6 +78,17 @@ const APP_FUNKTIONEN = [
 
 const APP_CHANGELOG = [
   {
+    version: '1.12',
+    groups: [
+      {
+        title: 'Automatische Backups',
+        items: [
+          'Die automatische Sicherung entsteht jetzt wirklich beim ersten Öffnen an jedem Kalendertag. Vorher musste die letzte Sicherung 24 Stunden alt sein — wer abends öffnete und am nächsten Tag etwas früher, bekam an diesem Tag keinen Stand.',
+        ],
+      },
+    ],
+  },
+  {
     version: '1.11',
     groups: [
       {
