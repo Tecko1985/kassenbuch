@@ -13,15 +13,22 @@ function renderBuchungen() {
   // bietet weiter nur die aktiven an.
   const alleKonten = getAccounts();
   const accounts = alleKonten.filter(a => !a.archived);
+  const allCats = [...new Set([...getCategories('income'), ...getCategories('expense')])];
+  const months = getAvailableMonths();
+
+  // Ein Filter, dessen Option verschwunden ist (Monat ohne Buchung, archiviertes Konto,
+  // gelöschte Kategorie), fällt auf „Alle“ zurück. Sonst zeigte die Auswahl „Alle …“,
+  // die Liste blieb aber unsichtbar gefiltert und leer (Bugjagd 16.10. GE-F2).
+  if (txnFilterMonth && !months.includes(txnFilterMonth)) txnFilterMonth = null;
+  if (txnFilterAccount && !accounts.some(a => a.id === txnFilterAccount)) txnFilterAccount = '';
+  if (txnFilterCategory && !allCats.includes(txnFilterCategory)) txnFilterCategory = '';
 
   let txns = sortedTransactionsDesc();
   if (txnFilterMonth) txns = txns.filter(t => t.date.startsWith(txnFilterMonth));
   if (txnFilterAccount) txns = txns.filter(t => t.accountId === txnFilterAccount || t.fromAccountId === txnFilterAccount || t.toAccountId === txnFilterAccount);
   if (txnFilterCategory) txns = txns.filter(t => t.category === txnFilterCategory);
 
-  const allCats = [...new Set([...getCategories('income'), ...getCategories('expense')])];
-
-  const monthOptions = getAvailableMonths().map(m =>
+  const monthOptions = months.map(m =>
     `<option value="${m}" ${txnFilterMonth === m ? 'selected' : ''}>${formatMonthLabel(m)}</option>`).join('');
 
   const accountOptions = accounts.map(a =>
