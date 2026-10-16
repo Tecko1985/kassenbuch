@@ -78,6 +78,17 @@ const APP_FUNKTIONEN = [
 
 const APP_CHANGELOG = [
   {
+    version: '1.13',
+    groups: [
+      {
+        title: 'Fehler behoben',
+        items: [
+          'Buchungen: Ein Filter springt auf „Alle“ zurück, wenn es seinen Monat, sein Konto oder seine Kategorie nicht mehr gibt — etwa nach dem Umdatieren der letzten Buchung eines Monats, dem Archivieren eines Kontos oder dem Löschen einer Kategorie. Vorher zeigte die Auswahl „Alle Monate“, die Liste aber „Keine Buchungen gefunden.“',
+        ],
+      },
+    ],
+  },
+  {
     version: '1.12',
     groups: [
       {
